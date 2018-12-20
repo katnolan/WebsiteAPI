@@ -10,7 +10,7 @@ using System.Web.Http;
 
 namespace WebsiteRoutes.Controllers
 {
-    [Route("api/clubs")]
+    [Route("v1/clubs")]
     [AllowAnonymous]
     public class ClubsController : ApiController
     {
