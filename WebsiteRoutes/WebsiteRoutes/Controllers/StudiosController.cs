@@ -10,6 +10,7 @@ using WebsiteRoutes.Models;
 namespace WebsiteRoutes.Controllers
 {
     [Route("api/studios")]
+    [AllowAnonymous]
     public class StudiosController : ApiController
     {
 

@@ -20,11 +20,6 @@ namespace WebsiteRoutes
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
 
-            //routes.MapRoute(
-            //    name: "Studios",
-            //    url: "{controller}/{id}",
-            //    defaults: new { controller = "Studios", id = UrlParameter.Optional }
-            //);
 
         }
     }

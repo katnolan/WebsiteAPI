@@ -11,6 +11,7 @@ using System.Web.Http;
 namespace WebsiteRoutes.Controllers
 {
     [Route("api/clubs")]
+    [AllowAnonymous]
     public class ClubsController : ApiController
     {
 
