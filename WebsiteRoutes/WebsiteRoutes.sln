@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteRoutes", "WebsiteRoutes\WebsiteRoutes.csproj", "{64695AE6-6BBA-4D0A-85A3-E8ADE04EF22E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBigQuery", "TestBigQuery\TestBigQuery.csproj", "{35A60595-BF4A-4B07-86F6-0FE796CD58AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64695AE6-6BBA-4D0A-85A3-E8ADE04EF22E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64695AE6-6BBA-4D0A-85A3-E8ADE04EF22E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64695AE6-6BBA-4D0A-85A3-E8ADE04EF22E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64695AE6-6BBA-4D0A-85A3-E8ADE04EF22E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35A60595-BF4A-4B07-86F6-0FE796CD58AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35A60595-BF4A-4B07-86F6-0FE796CD58AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35A60595-BF4A-4B07-86F6-0FE796CD58AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35A60595-BF4A-4B07-86F6-0FE796CD58AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3B9C05FD-9BC0-4B4A-A30D-9D829DCE16E0}
+	EndGlobalSection
+EndGlobal
