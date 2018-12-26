@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using WebsiteRoutes.App_Start;
 
 namespace WebsiteRoutes
 {
@@ -13,8 +15,8 @@ namespace WebsiteRoutes
             //config.Filters.Add(new AuthorizeAttribute());
 
             // Web API configuration and services
-            config.Formatters.JsonFormatter.SupportedMediaTypes
-                 .Add(new MediaTypeHeaderValue("text/html"));
+            var jsonFormatter = new JsonMediaTypeFormatter();
+            config.Services.Replace(typeof(IContentNegotiator), new JsonContentNegotiator(jsonFormatter));
 
             // Web API routes
             config.MapHttpAttributeRoutes();
