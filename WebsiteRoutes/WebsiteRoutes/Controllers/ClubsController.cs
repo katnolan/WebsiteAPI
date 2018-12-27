@@ -2,34 +2,42 @@
 using WebsiteRoutes.Services;
 using System;
 using System.Collections.Generic;
-using Google.Cloud.BigQuery.V2;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Google.Cloud.BigQuery.V2;
+
 
 namespace WebsiteRoutes.Controllers
 {
     [Route("v1/clubs")]
-    [AllowAnonymous]
-    public class ClubsController : ApiController
+    [ApiController]
+    public class ClubsController : ControllerBase
     {
 
         Club[] clubs = new ClubsService().Get();
 
-        [HttpGet]
-        public HttpResponseMessage GetClubs(int? clubid = null)
+        private readonly ILogger<ClubsController> _logger;
+        public ClubsController(ILogger<ClubsController> logger)
         {
-            
+            _logger = logger;
+        }
+
+        [HttpGet]
+        public ActionResult GetClubs(int? clubid = null)
+        {
+
+            _logger.LogInformation("Logging Info");
 
             if (clubid != null)
             {
                 var club = clubs.FirstOrDefault((c) => c.clubid == clubid);
-                return Request.CreateResponse(HttpStatusCode.OK, club);
+                return Ok(club);
             }
             else
             {
-                return Request.CreateResponse(HttpStatusCode.OK, clubs);
+                return Ok(clubs);
             }
             
         }

@@ -130,12 +130,6 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebsiteRoutes\WebsiteRoutes.csproj">
-      <Project>{64695ae6-6bba-4d0a-85a3-e8ade04ef22e}</Project>
-      <Name>WebsiteRoutes</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
