@@ -17,6 +17,8 @@ namespace ApiReadRoutes.Controllers
         {
             _hostingEnvironment = hostingEnvironment;
         }
+
+        [HttpGet]
         public ActionResult Index()
         {
             var webRootPath = _hostingEnvironment.WebRootPath;

@@ -18,7 +18,6 @@ namespace ApiReadRoutes.Controllers
     public class ClubsController : ControllerBase
     {
         private readonly ILogger<ClubsController> _logger;
-
         public ClubsController(ILogger<ClubsController> logger)
         {
             _logger = logger;
