@@ -1,23 +1,28 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Cloud.BigQuery.V2;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Web;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.IO;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using Google.Cloud.BigQuery.V2;
+using Google.Apis.Auth.OAuth2;
 
-namespace WebsiteRoutes
+
+namespace ApiReadRoutes.Utils
 {
     public class BigQueryQuery
     {
-
-        private string jsonpath = HttpContext.Current.Server.MapPath("../googleCredentials.json");
-
+        private readonly string jsonpath = "Utils/googleCredentials.json";
+        
+        
         private string projectId = "vaulted-charmer-205613";
 
         public BigQueryClient CreateClient()
         {
-            BigQueryClient client = BigQueryClient.Create(projectId,GoogleCredential.FromFile(jsonpath));
+            BigQueryClient client = BigQueryClient.Create(projectId, GoogleCredential.FromFile(jsonpath));
             return client;
         }
 
@@ -29,20 +34,6 @@ namespace WebsiteRoutes
                 options: new QueryOptions { UseQueryCache = false }
             );
             return job;
-        }
-
-        public void WriteResults(
-            string query
-        )
-        {
-            BigQueryClient client = CreateClient();
-            BigQueryJob job = CreateQueryJob(client, query);
-            job.PollUntilCompleted();
-
-            foreach (BigQueryRow row in client.GetQueryResults(job.Reference))
-            {
-                Console.WriteLine($"{row["ClubId"]},{row["ClubName"]}");
-            }
         }
 
 

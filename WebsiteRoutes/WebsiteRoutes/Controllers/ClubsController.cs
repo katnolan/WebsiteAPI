@@ -3,6 +3,7 @@ using WebsiteRoutes.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,14 +16,15 @@ namespace WebsiteRoutes.Controllers
     [ApiController]
     public class ClubsController : ControllerBase
     {
-
-        Club[] clubs = new ClubsService().Get();
-
         private readonly ILogger<ClubsController> _logger;
         public ClubsController(ILogger<ClubsController> logger)
         {
             _logger = logger;
         }
+
+
+        Club[] clubs = new ClubsService().Get();
+
 
         [HttpGet]
         public ActionResult GetClubs(int? clubid = null)
