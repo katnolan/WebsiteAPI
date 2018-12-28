@@ -24,7 +24,7 @@ namespace ApiReadRoutes.Controllers
         }
        
 
-        Club[] clubs = new ClubService().Get();
+        Club[] clubs = new ClubService().GetClubs();
 
         // GET v1/clubs?clubid={clubid}
         [HttpGet]

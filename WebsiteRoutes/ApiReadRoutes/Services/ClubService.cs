@@ -13,7 +13,7 @@ namespace ApiReadRoutes.Services
     {
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
         static private readonly string query = @"SELECT ClubId clubid, ClubName clubname, CSIId csiid, GPId gpid, Location location, isActive FROM Data_Layer.Clubs WHERE DivisionId = 2";
-        //@"SELECT TO_JSON_STRING(t, true) FROM(SELECT ClubId clubid, ClubName clubname, Location location, isActive FROM Data_Layer.Clubs WHERE DivisionId = 2) t";
+        
 
         public ClubService()
         {
@@ -21,58 +21,33 @@ namespace ApiReadRoutes.Services
             var client = bqq.CreateClient();
             var job = bqq.CreateQueryJob(client, query);
             Results.Add(bqq.GetBigQueryResults(client, job));
-
-
         }
 
 
-        public Club[] Get()
+        public Club[] GetClubs()
         {
+            List<Club> clubList = new List<Club>();
 
-            List<Club> clubsList = new List<Club>();
-
-            int numList = Results.Count();
-
-            for (int i = 0; i < numList; i++)
+            BigQueryResults result = Results[0];
+            
+            foreach(BigQueryRow row in result)
             {
-                var res = Results[i];
-                foreach (BigQueryRow row in res)
-                {
-                    Club club = new Club();
-                    int numCols = res.Schema.Fields.Count();
-                    for (int j = 0; j < numCols; j++)
-                    {
-                        Console.WriteLine($"{row.Schema.Fields[j].Name}: {row[j]}");
-                        if (row.Schema.Fields[j].Name == "clubid")
-                        {
-                            club.clubid = Convert.ToInt32(row[j]);
-                        }
-                        else if (row.Schema.Fields[j].Name == "clubname")
-                        {
-                            club.clubname = row[j].ToString();
-                        }
-                        else if (row.Schema.Fields[j].Name == "location")
-                        {
-                            club.location = row[j].ToString();
-                        }
-                        else if (row.Schema.Fields[j].Name == "isActive")
-                        {
-                            club.isActive = Convert.ToBoolean(row[j]);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
+                Club club = new Club();
 
-                    clubsList.Add(club);
-                }
+                club.clubid = Convert.ToInt32(row["clubid"]);
+                club.clubname = row["clubname"].ToString();
+                club.csiid = Convert.ToInt32(row["csiid"]);
+                club.gpid = Convert.ToInt32(row["gpid"]);
+                club.location = row["location"].ToString();
+                club.isActive = Convert.ToBoolean(row["isActive"]);
+
+
+                clubList.Add(club);
             }
 
+            Club[] clubs = clubList.ToArray();
 
-            Club[] clubs = clubsList.ToArray();
             return clubs;
-
         }
     }
 }
