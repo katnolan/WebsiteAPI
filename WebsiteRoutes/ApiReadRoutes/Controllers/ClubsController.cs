@@ -18,23 +18,12 @@ namespace ApiReadRoutes.Controllers
     public class ClubsController : ControllerBase
     {
         private readonly ILogger<ClubsController> _logger;
-        private readonly IHostingEnvironment _hostingEnvironment;
 
-        private string jsonpath = "";
-
-        public ClubsController(ILogger<ClubsController> logger, IHostingEnvironment hostingEnvironment)
+        public ClubsController(ILogger<ClubsController> logger)
         {
             _logger = logger;
-            _hostingEnvironment = hostingEnvironment;
         }
-        
-        public ActionResult Index()
-        {
-            var contentRootPath = _hostingEnvironment.ContentRootPath;
-            jsonpath = Path.Combine(contentRootPath, "Utils\\googleCredential.json");
-
-            return Ok(jsonpath);
-        }
+       
 
         Club[] clubs = new ClubService().Get();
 
@@ -45,7 +34,7 @@ namespace ApiReadRoutes.Controllers
 
             _logger.LogInformation("Logging Info");
 
-            if (clubid != null)
+            if(clubid != null)
             {
                 var club = clubs.FirstOrDefault((c) => c.clubid == clubid);
                 return Ok(club);
@@ -54,11 +43,11 @@ namespace ApiReadRoutes.Controllers
             {
                 return Ok(clubs);
             }
-
+            
         }
 
         [HttpGet("{clubid}")]
-        public ActionResult GetClub(int clubid)
+        public ActionResult GetClub(int? clubid = null)
         {
 
             _logger.LogInformation("Logging Info");

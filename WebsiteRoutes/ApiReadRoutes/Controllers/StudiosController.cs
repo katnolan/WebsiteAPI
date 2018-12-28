@@ -17,22 +17,9 @@ namespace ApiReadRoutes.Controllers
     public class StudiosController : ControllerBase
     {
         private readonly ILogger<StudiosController> _logger;
-        private readonly IHostingEnvironment _hostingEnvironment;
-
-        private string jsonpath = "";
-
-        public StudiosController(ILogger<StudiosController> logger, IHostingEnvironment hostingEnvironment)
+        public StudiosController(ILogger<StudiosController> logger)
         {
             _logger = logger;
-            _hostingEnvironment = hostingEnvironment;
-        }
-
-        public ActionResult Index()
-        {
-            var contentRootPath = _hostingEnvironment.ContentRootPath;
-            jsonpath = Path.Combine(contentRootPath, "Utils\\googleCredentials.json");
-
-            return Ok(jsonpath);
         }
 
         Studio[] studios = new StudioService().Get();
@@ -43,7 +30,12 @@ namespace ApiReadRoutes.Controllers
         {
             _logger.LogInformation("Logging info");
 
-            if (clubid != null)
+            if (clubid != null && studioid != null)
+            {
+                var studioClub = studios.FirstOrDefault((s) => s.studioid == studioid);
+                return Ok(studioClub);
+            }
+            else if (clubid != null)
             {
                 var clubStudios = studios.TakeWhile((s) => s.clubid == clubid);
                 return Ok(clubStudios);
