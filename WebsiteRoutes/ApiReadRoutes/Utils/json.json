@@ -1,0 +1,12 @@
+{
+    "type": "service_account",
+    "project_id": "vaulted-charmer-205613",
+    "private_key_id": "f580883b8ec2bff7a7ce72c3aef8cb7f52f3cfaa",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCxBuqDIKGHNXlA\nxDeFX/zUFjGQmc61tj7Vpv2UdZXF9BIgSrwgAFmzmbOqyvflGdA5O46R0wo0/ZuD\nLITAdj1OTVftnfbwcMVTjmI9DKWcwmgEhYNv3QIYduJILgyeD/jl09X38t2U0TSw\nA1omR8tUW+w2Gak8kVhA9ybfj2MClqURYT+Qiqx3FIyB5phJX+K5BgYRvsz6L09V\n3Sig3NBtCxB2QFKUU+QHw9SABrgWdo7VsUtprUscl/s8cZHKxLdlDJnCDO7gf1n5\njlGsNxDLjorHB0nrpSj1uxiY0LA2zptKqw6vdXoXJ5VjbpjBdFP0X39J5r+GA2ef\n0YSC5wv/AgMBAAECggEAC/06a7gNiIE0HZFMa1GFZ327TJ5GFCNsHP8qxF+0TYxK\nn/o/xHERoirCMsp9QHxfkEi6zqB62/zjB96/fONlIoT1dAfTPhR9ILwPZjARlUzL\nS6cZMD3JEwwWJipMO3Y8dqBCqQC/RgFnLpaDh/0rxaJWHJHfVtVHI1s5vEFTRMz/\nGfiAKUEGilflknezoqNfBPao2saJxJjMR4DcoKSwOHws92hQdJdZ6Dw0/6QDkCjL\n4g7dMkEgQs+eoxwUe8VjiIxJ4MKu8S4WPytZCUljQPkpqFvIBsvv6qmV2tI4OVqG\n/5ND0U9AU0DSQjrEBk3RGCPbYSvBnGpW1MS7WNyGXQKBgQDprpl36rqHgKuRXy/G\nOQOoZ1tGeVZerar69vQeScg45kUdMstO3EPKDwIXvl5cyKAkg/ouxp3P0zalQfA8\nb9JYZNYWrUx/y+oSl7Ck4aNKKmDjtrdkYozCapx1noBNFngzXXW7XH5AVdSMZwrb\nU4ZFJFxeXjFOLYSKv75Lqjuc3QKBgQDB7yG/pQ1wLlxMAbxhZp22C8fiyDp9DnPX\nTy9mIg6SjmSB7FHPf29iWf5t1YbVoJVhwzWrcFCZI2C7tTGPgJ4HkOCikehVtdjD\n69pgIXGDajeCAUMKj0w2D1+NH6B4JTm/u+/UqSkFpMQGIMDuetR0f/WLZCF8EFDD\nuMsXEi5giwKBgQCIwcfK6DI1rtW5g+1fompDmglO2x/y1Mwlh3UibKeitRBpoBpf\nkoSRserVnnF292rRM/OsgExHHiLy3/4KQJ7nYEvyhYUpnVrleqTEOdDoTJjba0k0\nlIAwH1hldVc8xhOea+nEtsKkQBbd/EfcR6tit37fM1zDldvln4Vsnrm4eQKBgQCk\nAJQru2rX2XzYEge63sq0btYE5IsBwr0X8bEFz/s+2QgKD01ICl6pb62IOLCj6/8o\nA6tZZcvjFVXyp1JYJs59W3l8QaOXCAdd+BBehym1lpeGa4bEYVZzySBm+b38nI5v\npIE2+C7mxOW4wO4nPtx4ANYnoO/oOOvz+ExXIFrz7QKBgQC3ChPzoondOoJkXSze\nxD5M4O1yLDm3sVp0vCnv2tcbn7eyWVBII07RJYhT/amu6XfUcsnqKowokjFNIjWb\nORzm9j/IDBjqJVrMsr6rpK2fHNxl23PPLyC9fqVvRcEqfFXpO6cBe4l28+DumXAQ\nUFJzeUROZX4sM9C5oHKY4fl+jQ==\n-----END PRIVATE KEY-----\n",
+    "client_email": "aspnet-bq-api@vaulted-charmer-205613.iam.gserviceaccount.com",
+    "client_id": "109157798140676870239",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/aspnet-bq-api%40vaulted-charmer-205613.iam.gserviceaccount.com"
+}
