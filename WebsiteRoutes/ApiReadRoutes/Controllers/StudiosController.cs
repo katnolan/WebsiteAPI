@@ -52,5 +52,16 @@ namespace ApiReadRoutes.Controllers
 
         }
 
+        [HttpGet("{studioid}")]
+        public ActionResult GetStudio(int studioid)
+        {
+            _logger.LogInformation("Logging info");
+
+            var studio = studios.FirstOrDefault((s) => s.studioid == studioid);
+            return Ok(studio);
+
+        }
+
+
     }
 }
