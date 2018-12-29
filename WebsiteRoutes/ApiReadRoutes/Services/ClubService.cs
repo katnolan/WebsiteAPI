@@ -24,7 +24,7 @@ namespace ApiReadRoutes.Services
         }
 
 
-        public Club[] GetClubs()
+        public List<Club> GetClubs()
         {
             List<Club> clubList = new List<Club>();
 
@@ -45,9 +45,7 @@ namespace ApiReadRoutes.Services
                 clubList.Add(club);
             }
 
-            Club[] clubs = clubList.ToArray();
-
-            return clubs;
+            return clubList;
         }
     }
 }

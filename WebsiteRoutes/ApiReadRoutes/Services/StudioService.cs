@@ -24,53 +24,26 @@ namespace ApiReadRoutes.Services
 
         }
 
-
-        public Studio[] Get()
+        public List<Studio> GetStudios()
         {
 
             List<Studio> studiosList = new List<Studio>();
 
-            int numList = Results.Count();
+            BigQueryResults result = Results[0];
 
-            for (int i = 0; i < numList; i++)
-            {
-                var res = Results[i];
-                foreach (BigQueryRow row in res)
-                {
-                    Studio studio = new Studio();
-                    int numCols = res.Schema.Fields.Count();
-                    for (int j = 0; j < numCols; j++)
-                    {
-                        Console.WriteLine($"{row.Schema.Fields[j].Name}: {row[j]}");
-                        if (row.Schema.Fields[j].Name == "studioid")
-                        {
-                            studio.studioid = Convert.ToInt32(row[j]);
-                        }
-                        else if (row.Schema.Fields[j].Name == "studioname")
-                        {
-                            studio.studioname = row[j].ToString();
-                        }
-                        else if (row.Schema.Fields[j].Name == "clubid")
-                        {
-                            studio.clubid = Convert.ToInt32(row[j]);
-                        }
-                        else if (row.Schema.Fields[j].Name == "isActive")
-                        {
-                            studio.isActive = Convert.ToBoolean(row[j]);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
+           foreach (BigQueryRow row in result)
+           {
+                Studio studio = new Studio();
 
-                    studiosList.Add(studio);
-                }
+                studio.studioid = Convert.ToInt32(row["studioid"]);
+                studio.studioname = row["studioname"].ToString();
+                studio.clubid = Convert.ToInt32(row["clubid"]);
+                studio.isActive = Convert.ToBoolean(row["isActive"]);
+
+                studiosList.Add(studio);
             }
 
-
-            Studio[] studios = studiosList.ToArray();
-            return studios;
+            return studiosList;
 
         }
     }

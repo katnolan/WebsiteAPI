@@ -22,7 +22,7 @@ namespace ApiReadRoutes.Controllers
             _logger = logger;
         }
 
-        Studio[] studios = new StudioService().Get();
+        List<Studio> studios = new StudioService().GetStudios();
 
 
         [HttpGet]
@@ -37,7 +37,8 @@ namespace ApiReadRoutes.Controllers
             }
             else if (clubid != null)
             {
-                var clubStudios = studios.TakeWhile((s) => s.clubid == clubid);
+
+                var clubStudios = studios.Where<Studio>((s) => s.clubid == clubid);
                 return Ok(clubStudios);
             }
             else if (studioid != null)
@@ -62,6 +63,15 @@ namespace ApiReadRoutes.Controllers
 
         }
 
+        [HttpGet("{clubid}")]
+        public ActionResult GetClubStudios(int clubid)
+        {
+            _logger.LogInformation("Logging info");
+
+            var clubStudios = studios.Where((s) => s.clubid == clubid);
+            return Ok(clubStudios);
+
+        }
 
     }
 }
