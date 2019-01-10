@@ -11,7 +11,8 @@ namespace ApiReadRoutes.Models
         public string name { get; set; }
         public int clubid { get; set; }
         public int studioid { get; set; }
-        public int personnelType { get; set; }          // Job Title
+        public int personneltypeid { get; set; }          // Job Title
+        public string personneltype { get; set; }
 
         public Personnel()
         {
