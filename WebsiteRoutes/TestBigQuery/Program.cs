@@ -16,14 +16,21 @@ namespace TestBigQuery
 
 
 
-            Club[] clubs = new ClubsService().Get();
+            //Club[] clubs = new ClubsService().Get();
 
 
  
-            clubs.ToList().ForEach(Console.WriteLine);
+            //clubs.ToList().ForEach(Console.WriteLine);
+
+            int clubid = 21;
 
 
-            
+            List<Event> events = new EventService(clubid, null, null, null).GetEvents();
+
+            events.ForEach(Console.WriteLine);
+
+
+
         }
 
             
