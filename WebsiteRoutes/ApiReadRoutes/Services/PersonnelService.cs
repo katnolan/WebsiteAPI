@@ -12,17 +12,11 @@ namespace ApiReadRoutes.Services
     public class PersonnelService
     {
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
-        private readonly string query;
 
 
         public PersonnelService(int? clubid = null, int? studioid = null)
         {
-            string query = "";
-
-            if(clubid == null && studioid == null)
-            {
-                query =
-                @"SELECT
+            string query = @"SELECT
                 EmployeeId employeeid,
                 CONCAT(FirstName,' ',LastName) employeename,
                 ClubId clubid,
@@ -35,64 +29,21 @@ namespace ApiReadRoutes.Services
               Data_Layer.Employees
                 INNER JOIN Data_Layer.JobTitles
                 ON JobTitles.JobTitleId = Employees.JobTitleId";
-            }
-            else if(clubid != null )
+
+            if (clubid != null && studioid != null)
             {
-                query =
-            @"SELECT
-                EmployeeId employeeid,
-                CONCAT(FirstName,' ',LastName) employeename,
-                ClubId clubid,
-                0 studioid,
-                Employees.JobTitleId jobtitleid,
-                CASE WHEN ClubID = 30 THEN FrenchName
-                     ELSE EnglishName
-                END jobtitle              
-              FROM
-              Data_Layer.Employees
-                INNER JOIN Data_Layer.JobTitles
-                ON JobTitles.JobTitleId = Employees.JobTitleId
-              WHERE
-                ClubId=" + clubid.ToString();
+                query = query + " WHERE ClubId=" + clubid.ToString() + " and StudioId=" + studioid.ToString();
             }
-            else if(studioid != null)
+            else if (clubid != null)
+            { 
+                query = query + " WHERE ClubId=" + clubid.ToString();
+            }
+            else if (studioid != null)
             {
-                query =
-           @"SELECT
-                EmployeeId employeeid,
-                CONCAT(FirstName,' ',LastName) employeename,
-                ClubId clubid,
-                0 studioid,
-                Employees.JobTitleId jobtitleid,
-                CASE WHEN ClubID = 30 THEN FrenchName
-                     ELSE EnglishName
-                END jobtitle              
-              FROM
-              Data_Layer.Employees
-                INNER JOIN Data_Layer.JobTitles
-                ON JobTitles.JobTitleId = Employees.JobTitleId
-              WHERE
-                StudioId=" + studioid.ToString();
+                query = query + " WHERE StudioId=" + studioid.ToString();
             }
-            else
-            {
-                query =
-                @"SELECT
-                EmployeeId employeeid,
-                CONCAT(FirstName,' ',LastName) employeename,
-                ClubId clubid,
-                0 studioid,
-                Employees.JobTitleId jobtitleid,
-                CASE WHEN ClubID = 30 THEN FrenchName
-                     ELSE EnglishName
-                END jobtitle              
-              FROM
-              Data_Layer.Employees
-                INNER JOIN Data_Layer.JobTitles
-                ON JobTitles.JobTitleId = Employees.JobTitleId
-              WHERE
-                ClubId=" + clubid.ToString() + " and StudioId=" + studioid.ToString();
-            }
+
+            
            
 
             var bqq = new BigQueryQuery();

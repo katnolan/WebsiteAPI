@@ -16,8 +16,6 @@ namespace ApiReadRoutes.Utils
     public class BigQueryQuery
     {
         private readonly string jsonpath = "Utils/googleCredentials.json";
-        
-        
         private string projectId = "vaulted-charmer-205613";
 
         public BigQueryClient CreateClient()
@@ -46,6 +44,7 @@ namespace ApiReadRoutes.Utils
             job.PollUntilCompleted();
 
             BigQueryResults results = client.GetQueryResults(job.Reference);
+            
 
             return results;
 

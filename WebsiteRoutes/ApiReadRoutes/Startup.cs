@@ -63,6 +63,7 @@ namespace ApiReadRoutes
             }
             else
             {
+                app.UseExceptionHandler("/error");
                 app.UseHsts();
 
                 app.UseSwagger();
