@@ -14,35 +14,65 @@ namespace ApiReadRoutes.Services
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
 
 
-        public PersonnelService(int? clubid = null, int? studioid = null)
+        public PersonnelService(int clubid, int? studioid = null, int? personnelid = null, string personneltype = null)
         {
             string query = @"SELECT
-                EmployeeId employeeid,
+                Employees.EmployeeId employeeid,
                 CONCAT(FirstName,' ',LastName) employeename,
-                ClubId clubid,
-                0 studioid,
+                Employees.ClubId clubid,
+                COALESCE(c.StudioId, 0) studioid,
                 Employees.JobTitleId jobtitleid,
-                CASE WHEN ClubID = 30 THEN FrenchName
-                     ELSE EnglishName
+                CASE WHEN Employees.ClubID = 30 THEN RTRIM(JobTitles.FrenchName)
+                     ELSE RTRIM(JobTitles.EnglishName)
                 END jobtitle              
               FROM
               Data_Layer.Employees
                 INNER JOIN Data_Layer.JobTitles
-                ON JobTitles.JobTitleId = Employees.JobTitleId";
+                ON JobTitles.JobTitleId = Employees.JobTitleId
+                LEFT JOIN 
+                (SELECT DISTINCT Classes.EmployeeId, Classes.ResourceId, Resources.StudioId
+                 FROM
+                 Data_Layer.Classes
+                 INNER JOIN Data_Layer.Resources
+                 ON Resources.ResourceId = Classes.ResourceId
+                 WHERE Classes.Date = CURRENT_DATE()) c
+                 on c.EmployeeId = Employees.EmployeeId
+              WHERE Employees.ClubId = " + clubid.ToString();
 
-            if (clubid != null && studioid != null)
-            {
-                query = query + " WHERE ClubId=" + clubid.ToString() + " and StudioId=" + studioid.ToString();
-            }
-            else if (clubid != null)
-            { 
-                query = query + " WHERE ClubId=" + clubid.ToString();
-            }
-            else if (studioid != null)
-            {
-                query = query + " WHERE StudioId=" + studioid.ToString();
-            }
+            string queryStudio = " and 0 = " + studioid.ToString();
+            string queryEmployee = " and Employees.EmployeeId = " + personnelid.ToString();
+            string queryJob = " and RTRIM(JobTitles.EnglishName) = " + personneltype;
 
+
+            if (studioid != null && personnelid != null && personneltype != null)
+            {
+                query = query + queryStudio + queryEmployee + queryJob;
+            }
+            else if (studioid != null && personnelid != null)
+            {
+                query = query + queryStudio + queryEmployee;
+            }
+            else if (studioid != null && personneltype != null)
+            {
+                query = query + queryStudio + queryJob;
+            }
+            else if (personneltype != null && personnelid != null)
+            {
+                query = query + queryEmployee + queryJob;
+            }
+            else if(studioid != null)
+            {
+                query = query + queryStudio;
+            }
+            else if(personnelid != null)
+            {
+                query = query + queryEmployee;
+            }
+            else if(personneltype != null)
+            {
+                query = query + queryJob;
+            }
+            
             
            
 

@@ -7,39 +7,44 @@ namespace ApiReadRoutes.Models
 {
     public class Event
     {
-        public int eventid { get; set; }
+        public int eventId { get; set; }
+        public string name { get; set; }
         public string description { get; set; }
-        public int clubid { get; set; }
-        public int studioid { get; set; }
-        public int personnelid { get; set; }
-        public string date { get; set; }
-        public string time { get; set; }
-        public bool nonmember { get; set; }
-        public bool canbook { get; set; }
-        public double nonmemberamount { get; set; }
-        public double memberamount { get; set; }
-        public int attendance { get; set; }
+        public int studioId { get; set; }        
+        public string startDate { get; set; }
+        public string startTime { get; set; }
+        public double priceNonMember { get; set; }
+        public double priceMember { get; set; }
+        public bool nonMember { get; set; }
+        public bool canBook { get; set; }
+        public int clubId { get; set; }
+        public string location { get; set; }
+        public int attending { get; set; }
+        public int attendingCapacity { get; set; }
+        public int personnelId { get; set; }
 
         public Event()
         {
 
         }
 
-        public Event(int eid, string desc, int club, int studio, int employeeid, string edate, string etime, bool nm, bool cb, double nmamt, double mamt, int att)
+        public Event(int eid, string n, string desc, int studio, string edate, string etime, double nmamt, double mamt, bool nm, bool cb, int club, string loc,  int att, int cap, int employeeid)
         {
-            eventid = eid;
+            eventId = eid;
+            name = n;
             description = desc;
-            clubid = club;
-            studioid = studio;
-            personnelid = employeeid;
-            date = edate;
-            time = etime;
-            nonmember = nm;
-            canbook = cb;
-            nonmemberamount = nmamt;
-            memberamount = mamt;
-            attendance = att;
-
+            studioId = studio;
+            startDate = edate;
+            startTime = etime;
+            priceNonMember = nmamt;
+            priceMember = mamt;
+            nonMember = nm;
+            canBook = cb;
+            clubId = club;
+            location = loc;
+            attending = att;
+            attendingCapacity = cap;
+            personnelId = employeeid;
         }
     }
 }

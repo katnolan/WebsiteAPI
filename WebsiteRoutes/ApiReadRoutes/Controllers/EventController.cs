@@ -23,16 +23,26 @@ namespace ApiReadRoutes.Controllers
 
         // GET v1/events
         [HttpGet]
-        public ActionResult GetEvents(int clubid, int? studioid = null, int? month = null, string keyword = null)
+        public ActionResult GetEvents(int clubid, int? studioid = null, DateTime? dateFrom = null, DateTime? dateTo = null, string keyword = null)
         {
             _logger.LogInformation("Log Start");
 
-            List<Event> events = new EventService(clubid, studioid, month, keyword).GetEvents();
+            List<Event> events = new EventService(clubid, studioid, dateFrom, dateTo, keyword).GetEvents();
 
-            var ev = events.Where((e) => e.clubid == clubid);
+            var ev = events.Where((e) => e.clubId == clubid);
             return Ok(ev);
         }
 
+        [HttpGet("{eventid}")]
+        public ActionResult GetEvent(int clubid, int eventid, int? studioid = null, DateTime? dateFrom = null, DateTime? dateTo = null, string keyword = null)
+        {
+            _logger.LogInformation("Logging Info");
+
+            List<Event> events = new EventService(clubid, studioid, dateFrom, dateTo, keyword).GetEvents();
+
+            var eventone = events.FirstOrDefault((e) => e.eventId == eventid);
+            return Ok(eventone);
+        }
 
         
     }

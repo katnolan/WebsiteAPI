@@ -19,6 +19,17 @@ namespace ApiReadRoutes.Models
 
         }
 
+        public Personnel(int empid, string n, int club, int studio, int jobid, string job)
+        {
+            personnelid = empid;
+            name = n;
+            clubid = club;
+            studioid = studio;
+            personneltypeid = jobid;
+            personneltype = job;
+
+        }
+
 
     }
 }

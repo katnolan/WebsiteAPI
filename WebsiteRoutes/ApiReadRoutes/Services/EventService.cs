@@ -12,43 +12,68 @@ namespace ApiReadRoutes.Services
     {
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
 
-        public EventService(int clubid, int? studioid = null, int? month = null, string keyword = null)
+        public EventService(int clubid, int? studioid = null, DateTime? dateFrom = null, DateTime? dateTo = null, string keyword = null)
         {
-            string query = @"SELECT EventId eventid, 
-                                    e.ClubId clubid,
+
+            DateTime df = Convert.ToDateTime(dateFrom);
+            DateTime dt = Convert.ToDateTime(dateTo);
+
+            string query = @"SELECT e.ScheduleId eventid, 
+                                    IF(e.EventName is null, '', e.EventName) name,
                                     e.Description description,
+                                    s.StudioId studioid,
                                     Date date,
                                     TimeFrom time,
-                                    s.StudioId studioid,
-                                    EmployeeId personnelid,
-                                    NonMemberFlag nonmember,
-                                    CanBook canbook,
                                     CAST(NonMemberAmount as FLOAT64) nonmemberamount,
                                     CAST(MemberAmount as FLOAT64) memberamount,
-                                    Attendance attendance
+                                    NonMemberFlag nonmember,
+                                    CanBook canbook,
+                                    e.ClubId clubid,
+                                    c.ClubName location,
+                                    Attendance attendance,
+                                    Capacity capacity,
+                                    EmployeeId personnelid
                              FROM Data_Layer.Events e 
                              INNER JOIN Data_Layer.Resources r 
                                 ON e.ResourceId = r.ResourceId
                              INNER JOIN Data_Layer.Studios s
                                 ON r.StudioId = s.StudioId
+                             INNER JOIN Data_Layer.Clubs c
+                                ON e.ClubId = c.ClubId
                              WHERE DATETIME (e.Date, TimeFrom) >= CURRENT_DATETIME()
                                and e.ClubId = " + clubid.ToString();
 
-            if (studioid != null && month != null && keyword != null)
+            string queryStudio = " and s.StudioId = " + studioid.ToString();
+            string queryKeyword = " and e.Description LIKE '%" + keyword + "%";
+            string queryDateRange = " and DATETIME(e.Date, TimeFrom) >= '" + df.ToString("yyyy-MM-dd") + "' and DATETIME(e.Date, TimeFrom ) < DATETIME_ADD('" + dt.ToString("yyyy-MM-dd") + "', INTERVAL 1 DAY)";
+
+            if (studioid != null && keyword != null && dateFrom != null)
             {
-                query = query + " and s.StudioId = " + studioid.ToString() + " and EXTRACT( MONTH, DATETIME(e.Date) ) = " + month.ToString() + " and e.Description LIKE '%" + keyword + "%";
+                query = query + queryKeyword + queryDateRange;
+            }
+            else if (studioid != null && dateFrom != null)
+            {
+                query = query + queryStudio + queryDateRange;
+            }
+            else if (studioid != null && keyword != null)
+            {
+                query = query + queryStudio + queryKeyword;
+            }
+            else if (dateFrom != null && keyword != null)
+            {
+                query = query + queryKeyword + queryDateRange;
             }
             else if (studioid != null)
             {
-                query = query + " and s.StudioId = " + studioid.ToString();
+                query = query + queryStudio;
             }
-            else if (month != null)
+            else if (dateFrom != null)
             {
-                query = query + " and EXTRACT( MONTH, DATETIME(e.Date) ) = " + month.ToString();
+                query = query + queryDateRange;
             }
             else if (keyword != null )
             {
-                query = query + " and e.Description LIKE '%" + keyword + "%";
+                query = query + queryKeyword;
             }
 
 
@@ -71,18 +96,22 @@ namespace ApiReadRoutes.Services
 
                 Event e = new Event();
 
-                e.eventid = Convert.ToInt32(row["eventid"]);
+                e.eventId = Convert.ToInt32(row["eventid"]);
+                e.name = row["name"].ToString();
                 e.description = row["description"].ToString();
-                e.clubid = Convert.ToInt32(row["clubid"]);
-                e.studioid = Convert.ToInt32(row["studioid"]);
-                e.personnelid = Convert.ToInt32(row["personnelid"]);
-                e.date = row["date"].ToString();
-                e.time = row["time"].ToString();
-                e.nonmember = Convert.ToBoolean(row["nonmember"]);
-                e.canbook = Convert.ToBoolean(row["canbook"]);
-                e.memberamount = Convert.ToDouble(row["memberamount"]);
-                e.nonmemberamount = Convert.ToDouble(row["nonmemberamount"]);
-                e.attendance = Convert.ToInt32(row["attendance"]);
+                e.studioId = Convert.ToInt32(row["studioid"]);
+                e.startDate = row["date"].ToString();
+                e.startTime = row["time"].ToString();
+                e.priceMember = Convert.ToDouble(row["memberamount"]);
+                e.priceNonMember = Convert.ToDouble(row["nonmemberamount"]);
+                e.nonMember = Convert.ToBoolean(row["nonmember"]);
+                e.canBook = Convert.ToBoolean(row["canbook"]);
+                e.clubId = Convert.ToInt32(row["clubid"]);
+                e.location = row["location"].ToString();                
+                e.attending = Convert.ToInt32(row["attendance"]);
+                e.attendingCapacity = Convert.ToInt32(row["capacity"]);
+                e.personnelId = Convert.ToInt32(row["personnelid"]);
+                
 
                 events.Add(e);
             }

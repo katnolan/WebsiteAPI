@@ -19,14 +19,20 @@ namespace ApiReadRoutes.Controllers
         }
 
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Index(DateTime? dateFrom = null, DateTime? dateTo = null)
         {
             var webRootPath = _hostingEnvironment.WebRootPath;
             var contentRootPath = _hostingEnvironment.ContentRootPath;
 
             var jsonpath = Path.Combine(contentRootPath, "Utils\\googleCredentials.json");
 
-            return Content(webRootPath + "\n" + contentRootPath + "\n" + jsonpath);
+            DateTime df = Convert.ToDateTime(dateFrom);
+            DateTime dt = Convert.ToDateTime(dateTo);
+
+            string datetimetest = "DateFrom: " + df.ToString("yyyy-MM-dd") + " and DateTo: " + dt.ToString("yyyy-MM-dd");
+                                 
+
+            return Content(webRootPath + "\n" + contentRootPath + "\n" + jsonpath + "\n" + datetimetest);
         }
     }
 }

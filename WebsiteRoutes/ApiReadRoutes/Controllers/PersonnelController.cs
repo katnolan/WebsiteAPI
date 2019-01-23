@@ -12,7 +12,7 @@ using ApiReadRoutes.Services;
 
 namespace ApiReadRoutes.Controllers
 {
-    [Route("v1/personnel")]
+    [Route("v1/personnel/{clubid}")]
     [Produces("application/json")]
     [ApiController]
     public class PersonnelController : ControllerBase
@@ -26,62 +26,19 @@ namespace ApiReadRoutes.Controllers
 
         
 
-        // GET v1/clubs?clubid={clubid}
+        // GET v1/personnel/{clubid}?studioid={studioid}&personnelid={personnelid}&personneltype={personneltype}
         [HttpGet]
-        public ActionResult GetEmployees(int? clubid = null, int? studioid = null)
+        public ActionResult GetEmployees(int clubid, int? studioid = null, int? personnelid = null, string personneltype = null)
         {
 
             _logger.LogInformation("Logging Info");
 
-            List<Personnel> employees = new PersonnelService(clubid, studioid).GetPersonnel();
+            List<Personnel> employees = new PersonnelService(clubid, studioid, personnelid, personneltype).GetPersonnel();
 
-            if (clubid != null && studioid != null)
-            {
-                var employee = employees.Where((s) => s.studioid == studioid);
-                return Ok(employee);
-            }
-            else if(clubid != null)
-            {
-                var employee = employees.Where((e) => e.clubid == clubid);
-                return Ok(employee);
-            }
-            else if(studioid != null)
-            {
-                var employee = employees.Where((s) => s.studioid == studioid);
-                return Ok(employee);
-            }
-            else
-            {
-                return Ok(employees);
-            }
-            
-        }
-
-        [HttpGet("{clubid}")]
-        public ActionResult GetEmployee(int? clubid = null)
-        {
-
-            _logger.LogInformation("Logging Info");
-
-            List<Personnel> employees = new PersonnelService(clubid, null).GetPersonnel();
-
-            var employee = employees.Where((e) => e.clubid == clubid);
-            return Ok(employee);
-
+            var emp = employees.Where((e) => e.clubid == clubid);
+            return Ok(emp);
         }
 
 
-        [HttpGet("{studioid}")]
-        public ActionResult GetStudioEmployees(int? studioid = null)
-        {
-
-            _logger.LogInformation("Logging Info");
-
-            List<Personnel> employees = new PersonnelService(null, studioid).GetPersonnel();
-
-            var employee = employees.Where((e) => e.studioid == studioid);
-            return Ok(employee);
-
-        }
     }
 }
