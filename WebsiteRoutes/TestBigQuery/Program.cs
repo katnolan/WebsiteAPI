@@ -22,12 +22,16 @@ namespace TestBigQuery
  
             //clubs.ToList().ForEach(Console.WriteLine);
 
-            int clubid = 21;
+            int clubid = 16;
 
 
-            List<Event> events = new EventService(clubid, null, null, null).GetEvents();
+            //List<Event> events = new EventService(clubid, null, null, null).GetEvents();
 
-            events.ForEach(Console.WriteLine);
+            List<Personnel> employees = new PersonnelService(clubid, null, null, null).GetPersonnel();
+
+            //events.ForEach(Console.WriteLine);
+
+            employees.ForEach(Console.WriteLine);
 
 
 

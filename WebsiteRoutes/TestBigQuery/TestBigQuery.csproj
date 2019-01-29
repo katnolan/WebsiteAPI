@@ -121,6 +121,8 @@
     <Compile Include="ClubsService.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventService.cs" />
+    <Compile Include="Personnel.cs" />
+    <Compile Include="PersonnelService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

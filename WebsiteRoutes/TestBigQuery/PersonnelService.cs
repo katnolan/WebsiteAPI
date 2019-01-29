@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Google.Cloud.BigQuery.V2;
-using ApiReadRoutes.Utils;
-using ApiReadRoutes.Models;
 
-namespace ApiReadRoutes.Services
+
+namespace TestBigQuery
 {
     public class PersonnelService
     {
@@ -48,7 +46,7 @@ namespace ApiReadRoutes.Services
                 ON JobTitles.JobTitleId = Employees.JobTitleId
               WHERE Employees.ClubId = " + clubid.ToString();
 
-            string queryStudio = " and " + studioid.ToString() + " IN UNNEST(Studios)";
+            string queryStudio = " and " + studioid.ToString() + " IN UNNEST(a.Studios)";
             string queryEmployee = " and Employees.EmployeeId = " + personnelid.ToString();
             string queryJob = " and RTRIM(JobTitles.EnglishName) = " + personneltype;
 
@@ -102,8 +100,7 @@ namespace ApiReadRoutes.Services
             {
                 Personnel employee = new Personnel();
 
-                
-
+               
                 employee.personnelid = Convert.ToInt32(row["employeeid"]);
                 employee.name = row["employeename"].ToString();
                 employee.clubid = Convert.ToInt32(row["clubid"]);
