@@ -32,14 +32,15 @@ namespace ApiReadRoutes.Services
             
             foreach(BigQueryRow row in result)
             {
-                Club club = new Club();
-
-                club.clubid = Convert.ToInt32(row["clubid"]);
-                club.clubname = row["clubname"].ToString();
-                club.csiid = Convert.ToInt32(row["csiid"]);
-                club.gpid = Convert.ToInt32(row["gpid"]);
-                club.location = row["location"].ToString();
-                club.isActive = Convert.ToBoolean(row["isActive"]);
+                Club club = new Club
+                {
+                    clubid = Convert.ToInt32(row["clubid"]),
+                    clubname = row["clubname"].ToString(),
+                    csiid = Convert.ToInt32(row["csiid"]),
+                    gpid = Convert.ToInt32(row["gpid"]),
+                    location = row["location"].ToString(),
+                    isActive = Convert.ToBoolean(row["isActive"])
+                };
 
 
                 clubList.Add(club);

@@ -100,16 +100,15 @@ namespace ApiReadRoutes.Services
             
             foreach(BigQueryRow row in result)
             {
-                Personnel employee = new Personnel();
-
-                
-
-                employee.personnelid = Convert.ToInt32(row["employeeid"]);
-                employee.name = row["employeename"].ToString();
-                employee.clubid = Convert.ToInt32(row["clubid"]);
-                employee.studioid = (long[])row["Studios"];
-                employee.personneltypeid = Convert.ToInt32(row["jobtitleid"]);
-                employee.personneltype = row["jobtitle"].ToString();
+                Personnel employee = new Personnel
+                {
+                    personnelid = Convert.ToInt32(row["employeeid"]),
+                    name = row["employeename"].ToString(),
+                    clubid = Convert.ToInt32(row["clubid"]),
+                    studioid = (long[])row["Studios"],
+                    personneltypeid = Convert.ToInt32(row["jobtitleid"]),
+                    personneltype = row["jobtitle"].ToString()
+                };
 
                 employeeList.Add(employee);
             }

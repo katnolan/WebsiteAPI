@@ -261,3 +261,6 @@ __pycache__/
 *.pyc
 /WebsiteRoutes/WebsiteRoutes/Properties/PublishProfiles/common-svc - Web Deploy.pubxml
 *.json
+/WebsiteRoutes/ApiReadRoutes/Controllers/SchedulesController.cs
+/WebsiteRoutes/ApiReadRoutes/Models/Schedule.cs
+/WebsiteRoutes/ApiReadRoutes/Services/ScheduleService.cs

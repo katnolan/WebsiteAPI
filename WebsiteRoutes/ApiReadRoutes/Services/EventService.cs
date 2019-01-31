@@ -94,24 +94,25 @@ namespace ApiReadRoutes.Services
             {
 
 
-                Event e = new Event();
+                Event e = new Event
+                {
+                    eventId = Convert.ToInt32(row["eventid"]),
+                    name = row["name"].ToString(),
+                    description = row["description"].ToString(),
+                    studioId = Convert.ToInt32(row["studioid"]),
+                    startDate = row["date"].ToString(),
+                    startTime = row["time"].ToString(),
+                    priceMember = Convert.ToDouble(row["memberamount"]),
+                    priceNonMember = Convert.ToDouble(row["nonmemberamount"]),
+                    nonMember = Convert.ToBoolean(row["nonmember"]),
+                    canBook = Convert.ToBoolean(row["canbook"]),
+                    clubId = Convert.ToInt32(row["clubid"]),
+                    location = row["location"].ToString(),
+                    attending = Convert.ToInt32(row["attendance"]),
+                    attendingCapacity = Convert.ToInt32(row["capacity"]),
+                    personnelId = Convert.ToInt32(row["personnelid"])
+                };
 
-                e.eventId = Convert.ToInt32(row["eventid"]);
-                e.name = row["name"].ToString();
-                e.description = row["description"].ToString();
-                e.studioId = Convert.ToInt32(row["studioid"]);
-                e.startDate = row["date"].ToString();
-                e.startTime = row["time"].ToString();
-                e.priceMember = Convert.ToDouble(row["memberamount"]);
-                e.priceNonMember = Convert.ToDouble(row["nonmemberamount"]);
-                e.nonMember = Convert.ToBoolean(row["nonmember"]);
-                e.canBook = Convert.ToBoolean(row["canbook"]);
-                e.clubId = Convert.ToInt32(row["clubid"]);
-                e.location = row["location"].ToString();                
-                e.attending = Convert.ToInt32(row["attendance"]);
-                e.attendingCapacity = Convert.ToInt32(row["capacity"]);
-                e.personnelId = Convert.ToInt32(row["personnelid"]);
-                
 
                 events.Add(e);
             }

@@ -33,12 +33,13 @@ namespace ApiReadRoutes.Services
 
            foreach (BigQueryRow row in result)
            {
-                Studio studio = new Studio();
-
-                studio.studioid = Convert.ToInt32(row["studioid"]);
-                studio.studioname = row["studioname"].ToString();
-                studio.clubid = Convert.ToInt32(row["clubid"]);
-                studio.isActive = Convert.ToBoolean(row["isActive"]);
+                Studio studio = new Studio
+                {
+                    studioid = Convert.ToInt32(row["studioid"]),
+                    studioname = row["studioname"].ToString(),
+                    clubid = Convert.ToInt32(row["clubid"]),
+                    isActive = Convert.ToBoolean(row["isActive"])
+                };
 
                 studiosList.Add(studio);
             }
