@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using ApiReadRoutes.Services;
 using ApiReadRoutes.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiReadRoutes.Controllers
 {
+    [Authorize]
     [Route("v1/studios")]
     [Produces("application/json")]
     [ApiController]

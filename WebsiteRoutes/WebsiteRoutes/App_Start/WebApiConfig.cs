@@ -5,6 +5,7 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using WebsiteRoutes.App_Start;
+using WebsiteRoutes.Handlers;
 
 namespace WebsiteRoutes
 {
@@ -20,6 +21,9 @@ namespace WebsiteRoutes
 
             // Web API routes
             config.MapHttpAttributeRoutes();
+
+            //Authorize requests
+            config.MessageHandlers.Add(new TokenValidationHandler());
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
