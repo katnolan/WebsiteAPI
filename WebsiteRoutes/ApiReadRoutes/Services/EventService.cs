@@ -12,13 +12,26 @@ namespace ApiReadRoutes.Services
     {
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
 
-        public EventService(int clubid, int? studioid = null, DateTime? dateFrom = null, DateTime? dateTo = null, string keyword = null)
+        public EventService()
         {
 
-            DateTime df = Convert.ToDateTime(dateFrom);
-            DateTime dt = Convert.ToDateTime(dateTo);
+        }
 
-            string query = @"SELECT e.ScheduleId eventid, 
+        public EventService(int clubid, EventsFilters eventsFilters)
+        {
+            string query = BuildQuery(clubid, eventsFilters);
+
+
+            var bqq = new BigQueryQuery();
+            var client = bqq.CreateClient();
+            var job = bqq.CreateQueryJob(client, query);
+            Results.Add(bqq.GetBigQueryResults(client, job));
+        }
+
+        public static string BuildQuery(int clubid, EventsFilters ef)
+        {
+            string query = @"SELECT DISTINCT
+                                    e.ScheduleId eventid, 
                                     IF(e.EventName is null, '', e.EventName) name,
                                     e.Description description,
                                     s.StudioId studioid,
@@ -43,45 +56,73 @@ namespace ApiReadRoutes.Services
                              WHERE DATETIME (e.Date, TimeFrom) >= CURRENT_DATETIME()
                                and e.ClubId = " + clubid.ToString();
 
-            string queryStudio = " and s.StudioId = " + studioid.ToString();
-            string queryKeyword = " and e.Description LIKE '%" + keyword + "%";
-            string queryDateRange = " and DATETIME(e.Date, TimeFrom) >= '" + df.ToString("yyyy-MM-dd") + "' and DATETIME(e.Date, TimeFrom ) < DATETIME_ADD('" + dt.ToString("yyyy-MM-dd") + "', INTERVAL 1 DAY)";
-
-            if (studioid != null && keyword != null && dateFrom != null)
-            {
-                query = query + queryKeyword + queryDateRange;
-            }
-            else if (studioid != null && dateFrom != null)
-            {
-                query = query + queryStudio + queryDateRange;
-            }
-            else if (studioid != null && keyword != null)
-            {
-                query = query + queryStudio + queryKeyword;
-            }
-            else if (dateFrom != null && keyword != null)
-            {
-                query = query + queryKeyword + queryDateRange;
-            }
-            else if (studioid != null)
-            {
-                query = query + queryStudio;
-            }
-            else if (dateFrom != null)
-            {
-                query = query + queryDateRange;
-            }
-            else if (keyword != null )
-            {
-                query = query + queryKeyword;
-            }
 
 
+            if(ef == null)
+            {
+                return query;
+            }
+            else
+            {
+                string s = StudioCheck(ef);
+                string d = DateCheck(ef);
+                string k = KeywordCheck(ef);
 
-            var bqq = new BigQueryQuery();
-            var client = bqq.CreateClient();
-            var job = bqq.CreateQueryJob(client, query);
-            Results.Add(bqq.GetBigQueryResults(client, job));
+                return query = query + s + d + k;
+
+            }
+
+        }
+
+        public static string StudioCheck(EventsFilters ef)
+        {
+            
+
+            if(ef.studioid == null)
+            {
+                return "";
+            }
+            else
+            {
+                string queryStudio = " and s.StudioId = " + ef.studioid.ToString();
+                return queryStudio;
+            }
+
+
+        }
+        public static string KeywordCheck(EventsFilters ef)
+        {
+            
+
+            if(ef.keyword == null)
+            {
+                return "";
+            }
+            else
+            {
+                string queryKeyword = " and e.Description LIKE '%" + ef.keyword.ToString() + "%";
+                return queryKeyword;
+            }
+
+
+        }
+
+        public static string DateCheck(EventsFilters ef)
+        {
+            DateTime df = Convert.ToDateTime(ef.dateFrom);
+            DateTime dt = Convert.ToDateTime(ef.dateTo);
+            
+
+            if (df == null)
+            {
+                return "";
+            }
+            else
+            {
+                string queryDateRange = " and DATETIME(e.Date, TimeFrom) >= '" + df.ToString("yyyy-MM-dd") + "' and DATETIME(e.Date, TimeFrom ) < DATETIME_ADD('" + dt.ToString("yyyy-MM-dd") + "', INTERVAL 1 DAY)";
+                return queryDateRange;
+            }
+
         }
 
         public List<Event> GetEvents()

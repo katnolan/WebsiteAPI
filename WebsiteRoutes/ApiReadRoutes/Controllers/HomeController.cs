@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Web;
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace ApiReadRoutes.Controllers
 {
@@ -30,9 +33,17 @@ namespace ApiReadRoutes.Controllers
             DateTime dt = Convert.ToDateTime(dateTo);
 
             string datetimetest = "DateFrom: " + df.ToString("yyyy-MM-dd") + " and DateTo: " + dt.ToString("yyyy-MM-dd");
-                                 
 
-            return Content(webRootPath + "\n" + contentRootPath + "\n" + jsonpath + "\n" + datetimetest);
+            NameValueCollection nvc = HttpUtility.ParseQueryString(Request.QueryString.ToUriComponent());
+
+            StringBuilder claims = new StringBuilder();
+            foreach(String s in nvc.AllKeys)
+            {
+                claims.Append(s + " - " + nvc[s] + "\n");
+            }
+            
+
+            return Content(webRootPath + "\n" + contentRootPath + "\n" + jsonpath + "\n" + datetimetest + "\n" + claims);
         }
     }
 }

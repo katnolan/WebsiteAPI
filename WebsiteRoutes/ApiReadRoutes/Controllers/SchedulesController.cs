@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using ApiReadRoutes.Models;
 using ApiReadRoutes.Services;
+using ApiReadRoutes.Utils;
 
 namespace ApiReadRoutes.Controllers
 {
@@ -24,11 +25,13 @@ namespace ApiReadRoutes.Controllers
 
         //GET v1/schedule/{clubid}?startdate={startdate}&enddate={enddate}&studioid=[{studioid}]&classid=[{classid}]&personnelid=[{personnelid}]&activityType={activityType}&status={status}&limit={limit}&offset={offset}
         [HttpGet]
-        public ActionResult GetSchedules(int clubid, string activityType, string status, DateTime? startdate = null, DateTime? enddate = null, long[] studioid = null, long[] classid = null, long[] personnelid = null, int? limit = null, int? offset = null)
+        public ActionResult GetSchedules(int clubid)
         {
             _logger.LogInformation("Logging Info");
 
-            List<Schedule> classes = new ScheduleService(clubid, activityType, status, startdate, enddate, studioid, classid, personnelid, limit, offset).GetClasses();
+            ClassesFilters classFilters = RequestHelper.GetClassesFilters(Request);
+
+            List<Schedule> classes = new ScheduleService(clubid, classFilters).GetClasses();
             return Ok(classes);
         }
 
