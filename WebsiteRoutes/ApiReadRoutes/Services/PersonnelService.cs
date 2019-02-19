@@ -22,7 +22,7 @@ namespace ApiReadRoutes.Services
                 Employees.ClubId clubid,
                 ARRAY_CONCAT(
                 ARRAY(
-                 SELECT DISTINCT Resources.StudioId as Studios
+                 SELECT DISTINCT COALESCE(Resources.StudioId,0) as Studios
                  FROM
                  Data_Layer.Events
                  INNER JOIN Data_Layer.Resources
@@ -30,7 +30,7 @@ namespace ApiReadRoutes.Services
                  WHERE Events.Date = CURRENT_DATE()
                    and Events.EmployeeId = Employees.EmployeeId),
                 ARRAY(
-                 SELECT DISTINCT Resources.StudioId as Studios
+                 SELECT DISTINCT COALESCE(Resources.StudioId,0) as Studios
                  FROM
                  Data_Layer.Classes
                  INNER JOIN Data_Layer.Resources

@@ -105,7 +105,7 @@ namespace ApiReadRoutes
                     c.RoutePrefix = string.Empty;
                 });
             }
-            app.UseAuthentication();
+            //app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

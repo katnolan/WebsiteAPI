@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 using ApiReadRoutes.Models;
 using ApiReadRoutes.Services;
 using ApiReadRoutes.Utils;
 
 namespace ApiReadRoutes.Controllers
 {
+    //[Authorize]
     [Route("/v1/schedule/{clubid}")]
     [Produces("application/json")]
     [ApiController]
