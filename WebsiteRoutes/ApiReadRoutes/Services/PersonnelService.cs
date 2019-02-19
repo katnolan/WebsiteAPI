@@ -14,75 +14,9 @@ namespace ApiReadRoutes.Services
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
 
 
-        public PersonnelService(int clubid, int? studioid = null, int? personnelid = null, string personneltype = null)
+        public PersonnelService(int clubid, PersonnelFilters pf)
         {
-            string query = @"SELECT
-                Employees.EmployeeId employeeid,
-                CONCAT(FirstName,' ',LastName) employeename,
-                Employees.ClubId clubid,
-                ARRAY_CONCAT(
-                ARRAY(
-                 SELECT DISTINCT COALESCE(Resources.StudioId,0) as Studios
-                 FROM
-                 Data_Layer.Events
-                 INNER JOIN Data_Layer.Resources
-                 ON Resources.ResourceId = Events.ResourceId
-                 WHERE Events.Date = CURRENT_DATE()
-                   and Events.EmployeeId = Employees.EmployeeId),
-                ARRAY(
-                 SELECT DISTINCT COALESCE(Resources.StudioId,0) as Studios
-                 FROM
-                 Data_Layer.Classes
-                 INNER JOIN Data_Layer.Resources
-                 ON Resources.ResourceId = Classes.ResourceId
-                 WHERE Classes.Date = CURRENT_DATE()
-                   and Classes.EmployeeId = Employees.EmployeeId)
-                ) Studios,
-                Employees.JobTitleId jobtitleid,
-                CASE WHEN Employees.ClubID = 30 THEN RTRIM(JobTitles.FrenchName)
-                     ELSE RTRIM(JobTitles.EnglishName)
-                END jobtitle              
-              FROM
-              Data_Layer.Employees
-                INNER JOIN Data_Layer.JobTitles
-                ON JobTitles.JobTitleId = Employees.JobTitleId
-              WHERE Employees.ClubId = " + clubid.ToString();
-
-            string queryStudio = " and " + studioid.ToString() + " IN UNNEST(Studios)";
-            string queryEmployee = " and Employees.EmployeeId = " + personnelid.ToString();
-            string queryJob = " and RTRIM(JobTitles.EnglishName) = " + personneltype;
-
-
-            if (studioid != null && personnelid != null && personneltype != null)
-            {
-                query = query + queryStudio + queryEmployee + queryJob;
-            }
-            else if (studioid != null && personnelid != null)
-            {
-                query = query + queryStudio + queryEmployee;
-            }
-            else if (studioid != null && personneltype != null)
-            {
-                query = query + queryStudio + queryJob;
-            }
-            else if (personneltype != null && personnelid != null)
-            {
-                query = query + queryEmployee + queryJob;
-            }
-            else if(studioid != null)
-            {
-                query = query + queryStudio;
-            }
-            else if(personnelid != null)
-            {
-                query = query + queryEmployee;
-            }
-            else if(personneltype != null)
-            {
-                query = query + queryJob;
-            }
-            
-            
+            string query = BuildQuery(clubid, pf);           
            
 
             var bqq = new BigQueryQuery();
@@ -91,6 +25,110 @@ namespace ApiReadRoutes.Services
             Results.Add(bqq.GetBigQueryResults(client, job));
         }
 
+
+        public static string BuildQuery(int clubid, PersonnelFilters pf)
+        {
+            string query = @"SELECT employeeid,
+                                    employeename,
+                                    clubid,
+                                    Studios,
+                                    jobtitleid,
+                                    jobtitle
+                            FROM
+                            (
+                                SELECT
+                                        Employees.EmployeeId employeeid,
+                                        CONCAT(FirstName,' ',LastName) employeename,
+                                        Employees.ClubId clubid,
+                                        ARRAY_CONCAT(
+                                        ARRAY(
+                                         SELECT DISTINCT COALESCE(Resources.StudioId,0) as Studios
+                                         FROM
+                                         Data_Layer.Events
+                                         INNER JOIN Data_Layer.Resources
+                                         ON Resources.ResourceId = Events.ResourceId
+                                         WHERE Events.Date = CURRENT_DATE()
+                                           and Events.EmployeeId = Employees.EmployeeId),
+                                        ARRAY(
+                                         SELECT DISTINCT COALESCE(Resources.StudioId,0) as Studios
+                                         FROM
+                                         Data_Layer.Classes
+                                         INNER JOIN Data_Layer.Resources
+                                         ON Resources.ResourceId = Classes.ResourceId
+                                         WHERE Classes.Date = CURRENT_DATE()
+                                           and Classes.EmployeeId = Employees.EmployeeId)
+                                        ) Studios,
+                                        Employees.JobTitleId jobtitleid,
+                                        CASE WHEN Employees.ClubID = 30 THEN RTRIM(JobTitles.FrenchName)
+                                             ELSE RTRIM(JobTitles.EnglishName)
+                                        END jobtitle,
+                                        JobTitles.EnglishName             
+                                      FROM
+                                      Data_Layer.Employees
+                                        INNER JOIN Data_Layer.JobTitles
+                                        ON JobTitles.JobTitleId = Employees.JobTitleId
+                        ) a
+                        WHERE a.ClubId =  " + clubid.ToString();
+
+            if(pf == null)
+            {
+                return query;
+            }
+            else
+            {
+                string s = StudioCheck(pf);
+                string p = PersonnelCheck(pf);
+                string t = TypeCheck(pf);
+
+                return query + s + p + t;
+            }
+        }
+
+
+        public static string StudioCheck(PersonnelFilters pf)
+        {
+            string queryStudio = " and " + pf.studioid.ToString() + " IN UNNEST(a.Studios)";
+
+            if(pf.studioid == null)
+            {
+                return "";
+            }
+            else
+            {
+                return queryStudio;
+            }
+ 
+        }
+
+        public static string PersonnelCheck(PersonnelFilters pf)
+        {
+            string queryEmployee = " and a.EmployeeId = " + pf.personnelid.ToString();
+
+            if (pf.personnelid == null)
+            {
+                return "";
+            }
+            else
+            {
+                return queryEmployee;
+            }
+
+        }
+
+        public static string TypeCheck(PersonnelFilters pf)
+        {
+            string queryJob = " and RTRIM(a.EnglishName) = " + pf.personneltype;
+
+            if (pf.personneltype == null)
+            {
+                return "";
+            }
+            else
+            {
+                return queryJob;
+            }
+
+        }
 
         public List<Personnel> GetPersonnel()
         {

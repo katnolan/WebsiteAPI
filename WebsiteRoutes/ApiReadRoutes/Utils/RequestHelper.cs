@@ -107,5 +107,32 @@ namespace ApiReadRoutes.Utils
 
         }
 
+
+        public static PersonnelFilters GetPersonnelFilters(HttpRequest request)
+        {
+            PersonnelFilters _personnelFilters = new PersonnelFilters
+            {
+                studioid = null,
+                personnelid = null,
+                personneltype = null
+            };
+
+            Dictionary<string, string> valuePairs = ParseUri(request);
+
+            if (valuePairs.Count > 0)
+            {
+                if (valuePairs.TryGetValue("studioid", out string s)) { _personnelFilters.studioid = Convert.ToInt32(valuePairs["studioid"]); }
+                if (valuePairs.TryGetValue("personnelid", out string p)) { _personnelFilters.personnelid = Convert.ToInt32(valuePairs["personnelid"]); }
+                if (valuePairs.TryGetValue("personneltype", out string f)) { _personnelFilters.personneltype = Convert.ToString(valuePairs["personneltype"]); }
+
+                return _personnelFilters;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
     }
 }

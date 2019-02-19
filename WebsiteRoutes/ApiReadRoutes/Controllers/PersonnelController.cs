@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ApiReadRoutes.Models;
 using ApiReadRoutes.Services;
+using ApiReadRoutes.Utils;
 
 namespace ApiReadRoutes.Controllers
 {
@@ -30,12 +31,14 @@ namespace ApiReadRoutes.Controllers
 
         // GET v1/personnel/{clubid}?studioid={studioid}&personnelid={personnelid}&personneltype={personneltype}
         [HttpGet]
-        public ActionResult GetEmployees(int clubid, int? studioid = null, int? personnelid = null, string personneltype = null)
+        public ActionResult GetEmployees(int clubid)
         {
 
             _logger.LogInformation("Logging Info");
 
-            List<Personnel> employees = new PersonnelService(clubid, studioid, personnelid, personneltype).GetPersonnel();
+            PersonnelFilters filters = RequestHelper.GetPersonnelFilters(this.Request);
+
+            List<Personnel> employees = new PersonnelService(clubid, filters).GetPersonnel();
 
             var emp = employees.Where((e) => e.clubid == clubid);
             return Ok(emp);
