@@ -31,7 +31,7 @@ namespace ApiReadRoutes.Controllers
         {
             _logger.LogInformation("Logging Info");
 
-            ClassesFilters classFilters = RequestHelper.GetClassesFilters(Request);
+            ScheduleFilters classFilters = RequestHelper.GetClassesFilters(Request);
 
             List<Schedule> classes = new ScheduleService(clubid, classFilters).GetClasses();
             return Ok(classes);

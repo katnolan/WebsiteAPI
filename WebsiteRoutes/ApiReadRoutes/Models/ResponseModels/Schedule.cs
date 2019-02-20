@@ -23,7 +23,7 @@ namespace ApiReadRoutes.Models
         public DateTime sessionBeginDate { get; set; }          //If class is part of ProgReg
         public DateTime sessionEndDate { get; set; }            //If class is part of ProgReg
         public string memberStatus { get; set; }                //Member, Non-Member
-        public double isPrice { get; set; }
+        public decimal isPrice { get; set; }
         public int booked { get; set; }
         public int capacity { get; set; }
         public string intensity { get; set; }                         

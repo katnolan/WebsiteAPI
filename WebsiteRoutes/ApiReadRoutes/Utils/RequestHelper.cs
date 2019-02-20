@@ -69,9 +69,9 @@ namespace ApiReadRoutes.Utils
 
         }
 
-        public static ClassesFilters GetClassesFilters(HttpRequest request)
+        public static ScheduleFilters GetClassesFilters(HttpRequest request)
         {
-            ClassesFilters _classFilters = new ClassesFilters
+            ScheduleFilters _classFilters = new ScheduleFilters
             {
                 dateFrom = null,
                 dateTo = null,
@@ -90,10 +90,10 @@ namespace ApiReadRoutes.Utils
             {
                 if (valuePairs.TryGetValue("dateFrom", out string f)) { _classFilters.dateFrom = Convert.ToDateTime(valuePairs["dateFrom"]); }
                 if (valuePairs.TryGetValue("dateTo", out string t)) { _classFilters.dateTo = Convert.ToDateTime(valuePairs["dateTo"]); }
-                if (valuePairs.TryGetValue("studioId", out string s)) { _classFilters.studioid = string.Join(",",valuePairs["studioId"]); }
-                if (valuePairs.TryGetValue("classId", out string c)) { _classFilters.classid = string.Join(",", valuePairs["classId"]); }
-                if (valuePairs.TryGetValue("personnelId", out string p)) { _classFilters.personnelid = string.Join(",", valuePairs["personnelId"]); }
-                if (valuePairs.TryGetValue("activityType", out string at)) { _classFilters.activityType = Convert.ToInt32(valuePairs["activityType"]); }
+                if (valuePairs.TryGetValue("studioId", out string s)) { _classFilters.studioid = valuePairs["studioId"].ToString();}
+                if (valuePairs.TryGetValue("classId", out string c)) { _classFilters.classid = valuePairs["classId"].ToString(); }
+                if (valuePairs.TryGetValue("instructorId", out string p)) { _classFilters.personnelid = valuePairs["instructorId"].ToString(); }
+                if (valuePairs.TryGetValue("activityType", out string at)) { _classFilters.activityType = valuePairs["activityType"].ToString(); }
                 if (valuePairs.TryGetValue("keyword", out string k)) { _classFilters.keyword = valuePairs["keyword"]; }
                 if (valuePairs.TryGetValue("limit", out string l)) { _classFilters.limit = Convert.ToInt32(valuePairs["limit"]); }
                 if (valuePairs.TryGetValue("offset", out string o)) { _classFilters.offset = Convert.ToInt32(valuePairs["offset"]); }

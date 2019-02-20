@@ -12,7 +12,7 @@ namespace ApiReadRoutes.Services
     {
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
 
-        public ScheduleService(int clubid, ClassesFilters classFilters)
+        public ScheduleService(int clubid, ScheduleFilters classFilters)
         {
             string query = BuildQuery(clubid, classFilters);
                         
@@ -23,36 +23,39 @@ namespace ApiReadRoutes.Services
             Results.Add(bqq.GetBigQueryResults(client, job));
         }
 
-        public static string BuildQuery(int clubid, ClassesFilters cf)
+        public static string BuildQuery(int clubid, ScheduleFilters cf)
         {
-            string query = @"SELECT Classes.ClassId classid,
+            string query = @"SELECT DISTINCT
+       Classes.ClassId classid,
                                     Classes.ClubId clubid,
                                     ClassSchedules.ClassName classname,
                                     ClassSchedules.Description shortDescription,
-                                    MovementTypes.MovementTypeId activityTypeId,
-                                    Classes.Employeeid personnelid,
-                                    CONCAT(Employees.FirstName, ' ', Employees.LastName) personnelName,
+                                    IFNULL(MovementTypes.MovementTypeId, 0) activityTypeId,
+                                    IFNULL(Classes.Employeeid, 0) personnelid,
+                                    IFNULL(CONCAT(Employees.FirstName, ' ', Employees.LastName),'') personnelName,
                                     DATETIME(Classes.Date, Classes.TimeFrom) startDateTime,
                                     DATETIME(Classes.Date, Classes.TimeTo) endDateTime,
                                     ClassScheduleTypes.Description as activityCode,
-                                    Resources.StudioId studioid,
-                                    Studios.StudioName studioName,
+                                    IFNULL(Resources.StudioId, 0) studioid,
+                                    IFNULL(Studios.StudioName,'') studioName,
                                     ClassStatus.Status,
                                     CASE WHEN ClassSchedules.ClassScheduleTypeID = 1 THEN ClassSchedules.DateFrom
-                                        ELSE NULL
-                                    END sesssionBeginDate,
+                                        ELSE DATE('1900-01-01')
+                                    END sessionBeginDate,
                                     CASE WHEN  ClassSchedules.ClassScheduleTypeID = 1 THEN ClassSchedules.DateTo
-                                        ELSE NULL
+                                        ELSE DATE('1900-01-01')
                                     END sessionEndDate,
                                     CASE WHEN ClassSchedules.MemberOnlyFlag = true THEN 'Member Only'
                                         ELSE 'Non-Member Allowed'
+
                                     END memberStatus,
                                     Classes.Amount price,
                                     Classes.AttendanceCount booked,
                                     Classes.Capacity capacity,
-                                    Intensity.Intensity intensity
+                                    IFNULL(Intensity.Intensity,'') intensity
                             FROM Data_Layer.Classes
                             INNER JOIN Data_Layer.ClassSchedules on Classes.ClassScheduleId = ClassSchedules.ClassScheduleId
+                            LEFT JOIN Data_Layer.ClassCategories on ClassCategories.CategoryId = ClassSchedules.CategoryId
                             LEFT JOIN Data_Layer.ClassScheduleTypes on ClassScheduleTypes.ClassScheduleTypeId = ClassSchedules.ClassScheduleTypeId
                             LEFT JOIN Data_Layer.ClassStatus on ClassStatus.ClassStatusId = Classes.ClassStatusId
                             LEFT JOIN Data_Layer.MovementTypes on MovementTypes.MovementTypeId = Classes.MovementTypeId
@@ -60,7 +63,8 @@ namespace ApiReadRoutes.Services
                             LEFT JOIN Data_Layer.Resources on Resources.ResourceId = Classes.ResourceId
                             LEFT JOIN Data_Layer.Studios on Studios.StudioId = Resources.StudioId
                             LEFT JOIN Data_Layer.Intensity on Intensity.IntensityId = Classes.IntensityId
-                            WHERE DATETIME(Classes.Date, Classes.TimeFrom) >= CURRENT_DATETIME()
+                            WHERE Classes.Date >= CURRENT_DATE()
+                              and ClassCategories.MovementTypeId is not null
                               and Classes.ClubId = " + clubid.ToString();
 
 
@@ -78,37 +82,35 @@ namespace ApiReadRoutes.Services
                 string at = ActivityTypeCheck(cf);
                 string st = StatusCheck(cf);
                 string k = KeywordCheck(cf);
-                string l = LimitCheck(cf);
-                string o = OffsetCheck(cf);
+                string lo = LimitOffsetCheck(cf);
+              
 
-                return query = query + d + s + c + p + at + st + k + l + o;
+                return query = query + d + s + c + p + at + st + k + lo;
             }
 
         }
 
     
 
-        public static string DateCheck(ClassesFilters cf)
+        public static string DateCheck(ScheduleFilters cf)
         {
             DateTime df = Convert.ToDateTime(cf.dateFrom);
             DateTime dt = Convert.ToDateTime(cf.dateTo);
                        
-            string queryDates = " and Classes.Date >= " + df.ToString("yyyy-MM-dd") + " and Classes.Date < " + dt.ToString("yyyy-MM-dd");
-
-            if (df == null)
+            if (cf.dateFrom == null || cf.dateTo == null)
             {
                 return "";
             }
             else
             {
+                string queryDates = " and Classes.Date >= '" + df.ToString("yyyy-MM-dd") + "' and Classes.Date < DATE_ADD('" + dt.ToString("yyyy-MM-dd") + "',INTERVAL 1 DAY)";
+
                 return queryDates;
             }
         }
 
-        public static string StudioCheck(ClassesFilters cf)
+        public static string StudioCheck(ScheduleFilters cf)
         {
-
-            string queryStudio = " and Classes.StudioId in (" + string.Join(",", cf.studioid.ToString()) + ")";
 
             if (cf.studioid == null)
             {
@@ -116,28 +118,29 @@ namespace ApiReadRoutes.Services
             }
             else
             {
+                string queryStudio = " and Resources.StudioId in (" + string.Join(",", cf.studioid) + ")";
+
                 return queryStudio;
             }
         }
 
-        public static string ClassCheck(ClassesFilters cf)
+        public static string ClassCheck(ScheduleFilters cf)
         {
-            string queryClasses = " and Classes.ClassId in (" + string.Join(",", cf.classid.ToString()) + ")";
-
-
             if (cf.classid == null)
             {
                 return "";
             }
             else
             {
+                string queryClasses = " and Classes.ClassId in (" + string.Join(",", cf.classid) + ")";
+
                 return queryClasses;
             }
         }
 
-        public static string PersonnelCheck(ClassesFilters cf)
+        public static string PersonnelCheck(ScheduleFilters cf)
         {
-            string queryPersonnel = " and Classes.EmployeeId in (" + string.Join(",", cf.personnelid.ToString()) + ")";
+            
 
 
             if (cf.personnelid == null)
@@ -146,83 +149,77 @@ namespace ApiReadRoutes.Services
             }
             else
             {
+                string queryPersonnel = " and Classes.EmployeeId in (" + string.Join(",", cf.personnelid) + ")";
+
                 return queryPersonnel;
             }
         }
 
-        public static string ActivityTypeCheck(ClassesFilters cf)
+        public static string ActivityTypeCheck(ScheduleFilters cf)
         {
-            string queryActivityType = " and MovementTypes.MovementTypeId = " + cf.activityType.ToString();
-
-
+            
             if (cf.activityType == null)
             {
                 return "";
             }
             else
             {
+                string queryActivityType = " and MovementTypes.MovementTypeId = " + cf.activityType;
+
                 return queryActivityType;
             }
         }
 
-        public static string StatusCheck(ClassesFilters cf)
+        public static string StatusCheck(ScheduleFilters cf)
         {
-            string queryStatus = " and ClassStatus.Status = " + cf.status;
-
-
+            
             if (cf.status == null)
             {
                 return "";
             }
             else
             {
+                string queryStatus = " and ClassStatus.Status = " + cf.status;
+
                 return queryStatus;
             }
         }
 
-        public static string KeywordCheck(ClassesFilters cf)
+        public static string KeywordCheck(ScheduleFilters cf)
         {
-            string queryKeyword = " and e.Description LIKE '%" + cf.keyword.ToString() + "%";
-
             if (cf.keyword == null)
             {
                 return "";
             }
             else
             {
+                string queryKeyword = " and LOWER(ClassSchedules.ClassName) LIKE LOWER('%" + cf.keyword + "%')";
+
                 return queryKeyword;
             }
 
 
         }
 
-        public static string LimitCheck(ClassesFilters cf)
+        public static string LimitOffsetCheck(ScheduleFilters cf)
         {
-            string queryLimit = " LIMIT " + cf.limit.ToString();
-
-
-            if (cf.limit == null)
+            if (cf.limit == null && cf.offset == null)
             {
                 return "";
             }
             else
             {
-                return queryLimit;
-            }
-        }
+                if(cf.limit == null && cf.offset != null)
+                {
+                    return "";
+                }
+                else
+                {
+                    string queryLimit = " LIMIT " + cf.limit.ToString() + " OFFSET " + cf.offset.ToString();
 
-        public static string OffsetCheck(ClassesFilters cf)
-        {
-
-            string queryOffset = " OFFSET " + cf.offset.ToString();
-
-            if (cf.offset == null)
-            {
-                return "";
-            }
-            else
-            {
-                return queryOffset;
+                    return queryLimit;
+                }
+                
             }
         }
 
@@ -244,22 +241,22 @@ namespace ApiReadRoutes.Services
                     activityTypeId = Convert.ToInt32(row["activityTypeId"]),
                     personnelid = Convert.ToInt32(row["personnelid"]),
                     personnelName = row["personnelName"].ToString(),
-                    startDateTime = (DateTime)row["startDateTime"],
-                    endDateTime = (DateTime)row["endDateTime"],
+                    startDateTime = Convert.ToDateTime(row["startDateTime"]),
+                    endDateTime = Convert.ToDateTime(row["endDateTime"]),
                     activityCode = row["activityCode"].ToString(),
                     studioid = Convert.ToInt32(row["studioid"]),
                     studioName = row["studioName"].ToString(),
                     status = row["Status"].ToString(),
-                    sessionBeginDate = (DateTime)row["sessionBeginDate"],
-                    sessionEndDate = (DateTime)row["sessionEndDate"],
+                    sessionBeginDate = Convert.ToDateTime(row["sessionBeginDate"]),
+                    sessionEndDate = Convert.ToDateTime(row["sessionEndDate"]),
                     memberStatus = row["memberStatus"].ToString(),
-                    isPrice = Convert.ToDouble(row["price"]),
+                    isPrice = Convert.ToDecimal(row["price"].ToString()),
                     booked = Convert.ToInt32(row["booked"]),
                     capacity = Convert.ToInt32(row["capacity"]),
                     intensity = row["intensity"].ToString()
                 };
 
-                       
+
                 classList.Add(classes);
             }
 
