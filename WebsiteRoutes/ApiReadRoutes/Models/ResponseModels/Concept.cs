@@ -10,7 +10,7 @@ namespace ApiReadRoutes.Models
         public int conceptid { get; set; }
         public string conceptname { get; set; }
         public int clubid { get; set; }
-        public bool isActive { get; set; }
+        public bool isactive { get; set; }
 
         public Concept()
         {
@@ -22,7 +22,7 @@ namespace ApiReadRoutes.Models
             conceptid = id;
             conceptname = name;
             clubid = club;
-            isActive = ia;
+            isactive = ia;
         }
 
     }

@@ -11,11 +11,13 @@ namespace ApiReadRoutes.Services
     public class ConceptService
     {
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
-        static private readonly string query = @"SELECT ConceptId conceptid, Concept conceptname, ClubId clubid, isActive from Data_Layer_Test.Concepts";
         //@"SELECT TO_JSON_STRING(t, true) FROM(SELECT ClubId clubid, ClubName clubname, Location location, isActive FROM Data_Layer.Clubs WHERE DivisionId = 2) t";
 
         public ConceptService()
         {
+            string query = @"SELECT ConceptId conceptid, Concept conceptname, ClubId clubid, isActive from Data_Layer_Test.Concepts";
+
+
             var bqq = new BigQueryQuery();
             var client = bqq.CreateClient();
             var job = bqq.CreateQueryJob(client, query);
@@ -38,7 +40,7 @@ namespace ApiReadRoutes.Services
                     conceptid = Convert.ToInt32(row["conceptid"]),
                     conceptname = row["conceptname"].ToString(),
                     clubid = Convert.ToInt32(row["clubid"]),
-                    isActive = Convert.ToBoolean(row["isActive"])
+                    isactive = Convert.ToBoolean(row["isActive"])
                 };
 
                 ConceptsList.Add(Concept);

@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace ApiReadRoutes.Controllers
 {
     //[Authorize]
-    [Route("v2/concepts")]
+    [Route("v2/concepts/")]
     [Produces("application/json")]
     [ApiController]
     public class ConceptsController : ControllerBase
@@ -28,25 +28,24 @@ namespace ApiReadRoutes.Controllers
 
 
         [HttpGet]
-        public ActionResult GetConcepts(int? clubid = null, int? conceptid = null)
+        public ActionResult GetConcepts(int? clubid, int? conceptid = null)
         {
             _logger.LogInformation("Logging info");
 
             if (clubid != null && conceptid != null)
             {
-                var conceptClub = concepts.FirstOrDefault((s) => s.conceptid == conceptid);
-                return Ok(conceptClub);
-            }
-            else if (clubid != null)
-            {
-
-                var clubConcepts = concepts.Where<Concept>((s) => s.clubid == clubid);
-                return Ok(clubConcepts);
+                var clubConcept = concepts.Where((c) => c.conceptid == conceptid);
+                return Ok(clubConcept);
             }
             else if (conceptid != null)
             {
-                var concept = concepts.FirstOrDefault((s) => s.conceptid == conceptid);
-                return Ok(concept);
+                var clubConcept = concepts.Where((s) => s.conceptid == conceptid);
+                return Ok(clubConcept);
+            }
+            else if (clubid != null)
+            {
+                var clubConcept = concepts.Where((c) => c.clubid == clubid);
+                return Ok(clubConcept);
             }
             else
             {
@@ -55,25 +54,7 @@ namespace ApiReadRoutes.Controllers
 
         }
 
-        [HttpGet("{conceptid}")]
-        public ActionResult Getconcept(int conceptid)
-        {
-            _logger.LogInformation("Logging info");
-
-            var concept = concepts.FirstOrDefault((s) => s.conceptid == conceptid);
-            return Ok(concept);
-
-        }
-
-        [HttpGet("{clubid}")]
-        public ActionResult GetClubconcepts(int clubid)
-        {
-            _logger.LogInformation("Logging info");
-
-            var clubConcepts = concepts.Where((s) => s.clubid == clubid);
-            return Ok(clubConcepts);
-
-        }
+       
 
     }
 }
