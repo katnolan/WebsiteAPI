@@ -5,22 +5,22 @@ using System.Threading.Tasks;
 
 namespace ApiReadRoutes.Models
 {
-    public class Studio
+    public class Concept
     {
-        public int studioid { get; set; }
-        public string studioname { get; set; }
+        public int conceptid { get; set; }
+        public string conceptname { get; set; }
         public int clubid { get; set; }
         public bool isActive { get; set; }
 
-        public Studio()
+        public Concept()
         {
 
         }
 
-        public Studio(int id, string name, int club, bool ia)
+        public Concept(int id, string name, int club, bool ia)
         {
-            studioid = id;
-            studioname = name;
+            conceptid = id;
+            conceptname = name;
             clubid = club;
             isActive = ia;
         }

@@ -8,13 +8,13 @@ using ApiReadRoutes.Utils;
 
 namespace ApiReadRoutes.Services
 {
-    public class StudioService
+    public class ConceptService
     {
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
-        static private readonly string query = @"SELECT StudioId studioid, StudioName studioname, ClubId clubid, isActive from Data_Layer.Studios";
+        static private readonly string query = @"SELECT ConceptId conceptid, Concept conceptname, ClubId clubid, isActive from Data_Layer_Test.Concepts";
         //@"SELECT TO_JSON_STRING(t, true) FROM(SELECT ClubId clubid, ClubName clubname, Location location, isActive FROM Data_Layer.Clubs WHERE DivisionId = 2) t";
 
-        public StudioService()
+        public ConceptService()
         {
             var bqq = new BigQueryQuery();
             var client = bqq.CreateClient();
@@ -24,27 +24,27 @@ namespace ApiReadRoutes.Services
 
         }
 
-        public List<Studio> GetStudios()
+        public List<Concept> GetConcepts()
         {
 
-            List<Studio> studiosList = new List<Studio>();
+            List<Concept> ConceptsList = new List<Concept>();
 
             BigQueryResults result = Results[0];
 
            foreach (BigQueryRow row in result)
            {
-                Studio studio = new Studio
+                Concept Concept = new Concept
                 {
-                    studioid = Convert.ToInt32(row["studioid"]),
-                    studioname = row["studioname"].ToString(),
+                    conceptid = Convert.ToInt32(row["conceptid"]),
+                    conceptname = row["conceptname"].ToString(),
                     clubid = Convert.ToInt32(row["clubid"]),
                     isActive = Convert.ToBoolean(row["isActive"])
                 };
 
-                studiosList.Add(studio);
+                ConceptsList.Add(Concept);
             }
 
-            return studiosList;
+            return ConceptsList;
 
         }
     }
