@@ -14,20 +14,20 @@ using ApiReadRoutes.Utils;
 namespace ApiReadRoutes.Controllers
 {
     //[Authorize]
-    [Route("/v1/schedule/{clubid}")]
+    [Route("/v2/schedule/{clubid}")]
     [Produces("application/json")]
     [ApiController]
     public class SchedulesController : ControllerBase
     {
-        private readonly ILogger<PersonnelController> _logger;
-        public SchedulesController(ILogger<PersonnelController> logger)
+        private readonly ILogger<SchedulesController> _logger;
+        public SchedulesController(ILogger<SchedulesController> logger)
         {
             _logger = logger;
         }
 
-        //GET v1/schedule/{clubid}?startdate={startdate}&enddate={enddate}&studioid=[{studioid}]&classid=[{classid}]&personnelid=[{personnelid}]&activityType={activityType}&status={status}&limit={limit}&offset={offset}
+        //GET v1/schedule/{clubid}?startdate={startdate}&enddate={enddate}&conceptid=[{conceptid}]&classid=[{classid}]&personnelid=[{personnelid}]&activityType={activityType}&keyword={keyword}&status={status}&limit={limit}&offset={offset}&classtypeid={classtypeid}
         [HttpGet]
-        public ActionResult GetSchedules(int clubid)
+        public ActionResult GetSchedules(int clubid, string activitytype, string status, string keyword, string datefrom = null, string dateto = null, int?[] conceptid = null, int?[] personnelid = null, int? limit = null, int? offset = null, int? classtypeid = null)
         {
             _logger.LogInformation("Logging Info");
 

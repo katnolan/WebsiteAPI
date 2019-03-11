@@ -12,14 +12,14 @@ namespace ApiReadRoutes.Models
     public class EventsFilters
     {
 
-        [DisplayName("studioId")]
-        public int? studioid { get; set; }
+        [DisplayName("conceptid")]
+        public int? conceptid { get; set; }
         
-        [DisplayName("dateFrom")]
-        public string dateFrom { get; set; }
+        [DisplayName("datefrom")]
+        public string datefrom { get; set; }
 
-        [DisplayName("dateTo")]
-        public string dateTo { get; set; }
+        [DisplayName("dateto")]
+        public string dateto { get; set; }
 
         [DisplayName("keyword")]
         public string keyword { get; set; }

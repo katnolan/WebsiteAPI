@@ -11,7 +11,7 @@ using ApiReadRoutes.Services;
 namespace ApiReadRoutes.Controllers
 {
     //[Authorize]
-    [Route("v1/classtypes")]
+    [Route("v2/classtypes/{clubid}")]
     [Produces("application/json")]
     [ApiController]
     public class ClassTypesController : ControllerBase
@@ -25,14 +25,22 @@ namespace ApiReadRoutes.Controllers
 
         //GET /v1/classtypes
         [HttpGet]
-        public ActionResult GetClassTypes()
+        public ActionResult GetClassTypes(int clubid, int? conceptid = null)
         {
-           _logger.LogInformation("Logging Information");
+            _logger.LogInformation("Logging Information");
 
+            List<ClassTypes> ct = new ClassTypesService(clubid, conceptid).GetClassTypes();
 
-            List<ClassTypes> ct = new ClassTypesService().GetClassTypes();
+            if(conceptid == null)
+            {
+                return Ok(ct);
+            }
+            else
+            {
+                var conceptCT = ct.Where((c) => c.conceptId == conceptid);
 
-           return Ok(ct);
+                return Ok(conceptCT);
+            }
         }
     }
 }

@@ -16,13 +16,6 @@ namespace ApiReadRoutes.Utils
 {
     public class RequestHelper
     {
-        private readonly EventsFilters _eventsFilters = new EventsFilters
-        {
-            studioid = null,
-            dateFrom = null,
-            dateTo = null,
-            keyword = null
-        };
 
         public static Dictionary<string, string> ParseUri(HttpRequest request)
         {
@@ -44,9 +37,9 @@ namespace ApiReadRoutes.Utils
         {
             EventsFilters _eventsFilters = new EventsFilters
             {
-                studioid = null,
-                dateFrom = null,
-                dateTo = null,
+                conceptid = null,
+                datefrom = null,
+                dateto = null,
                 keyword = null
             };
 
@@ -54,9 +47,9 @@ namespace ApiReadRoutes.Utils
                 
             if (valuePairs.Count > 0)
             {
-                if(valuePairs.TryGetValue("studioId", out string s)) { _eventsFilters.studioid = Convert.ToInt32(valuePairs["studioId"]); } 
-                if(valuePairs.TryGetValue("dateFrom", out string f)) { _eventsFilters.dateFrom = valuePairs["dateFrom"]; }
-                if (valuePairs.TryGetValue("dateTo", out string t)) { _eventsFilters.dateTo = valuePairs["dateTo"]; }
+                if(valuePairs.TryGetValue("conceptid", out string s)) { _eventsFilters.conceptid = Convert.ToInt32(valuePairs["conceptid"]); } 
+                if(valuePairs.TryGetValue("datefrom", out string f)) { _eventsFilters.datefrom = valuePairs["datefrom"]; }
+                if (valuePairs.TryGetValue("dateto", out string t)) { _eventsFilters.dateto = valuePairs["dateto"]; }
                 if(valuePairs.TryGetValue("keyword", out string k)) { _eventsFilters.keyword = valuePairs["keyword"]; }
 
                 return _eventsFilters;
@@ -73,30 +66,32 @@ namespace ApiReadRoutes.Utils
         {
             ScheduleFilters _classFilters = new ScheduleFilters
             {
-                dateFrom = null,
-                dateTo = null,
-                studioid = null,
+                datefrom = null,
+                dateto = null,
+                conceptid = null,
                 classid = null,
-                personnelid = null,
-                activityType = null,
+                instructorid = null,
+                activitytype = null,
                 keyword = null,
                 limit = null,
-                offset = null
+                offset = null,
+                classtypeid = null
             };
 
             Dictionary<string, string> valuePairs = ParseUri(request);
 
             if (valuePairs.Count > 0)
             {
-                if (valuePairs.TryGetValue("dateFrom", out string f)) { _classFilters.dateFrom = Convert.ToDateTime(valuePairs["dateFrom"]); }
-                if (valuePairs.TryGetValue("dateTo", out string t)) { _classFilters.dateTo = Convert.ToDateTime(valuePairs["dateTo"]); }
-                if (valuePairs.TryGetValue("studioId", out string s)) { _classFilters.studioid = valuePairs["studioId"].ToString();}
-                if (valuePairs.TryGetValue("classId", out string c)) { _classFilters.classid = valuePairs["classId"].ToString(); }
-                if (valuePairs.TryGetValue("instructorId", out string p)) { _classFilters.personnelid = valuePairs["instructorId"].ToString(); }
-                if (valuePairs.TryGetValue("activityType", out string at)) { _classFilters.activityType = valuePairs["activityType"].ToString(); }
-                if (valuePairs.TryGetValue("keyword", out string k)) { _classFilters.keyword = valuePairs["keyword"]; }
+                if (valuePairs.TryGetValue("datefrom", out string f)) { _classFilters.datefrom = valuePairs["datefrom"].ToString(); }
+                if (valuePairs.TryGetValue("dateto", out string t)) { _classFilters.dateto = valuePairs["dateto"].ToString(); }
+                if (valuePairs.TryGetValue("conceptid", out string s)) { _classFilters.conceptid = valuePairs["conceptid"].ToString();}
+                if (valuePairs.TryGetValue("classid", out string c)) { _classFilters.classid = valuePairs["classid"].ToString(); }
+                if (valuePairs.TryGetValue("instructorid", out string p)) { _classFilters.instructorid = valuePairs["instructorid"].ToString(); }
+                if (valuePairs.TryGetValue("activitytype", out string at)) { _classFilters.activitytype = valuePairs["activitytype"].ToString(); }
+                if (valuePairs.TryGetValue("keyword", out string k)) { _classFilters.keyword = valuePairs["keyword"].ToString(); }
                 if (valuePairs.TryGetValue("limit", out string l)) { _classFilters.limit = Convert.ToInt32(valuePairs["limit"]); }
                 if (valuePairs.TryGetValue("offset", out string o)) { _classFilters.offset = Convert.ToInt32(valuePairs["offset"]); }
+                if (valuePairs.TryGetValue("classtypeid", out string ct)) { _classFilters.classtypeid = Convert.ToInt32(valuePairs["classtypeid"]); }
 
                 return _classFilters;
             }
@@ -112,7 +107,7 @@ namespace ApiReadRoutes.Utils
         {
             PersonnelFilters _personnelFilters = new PersonnelFilters
             {
-                studioid = null,
+                conceptid = null,
                 personnelid = null,
                 personneltype = null
             };
@@ -121,7 +116,7 @@ namespace ApiReadRoutes.Utils
 
             if (valuePairs.Count > 0)
             {
-                if (valuePairs.TryGetValue("studioid", out string s)) { _personnelFilters.studioid = Convert.ToInt32(valuePairs["studioid"]); }
+                if (valuePairs.TryGetValue("conceptid", out string s)) { _personnelFilters.conceptid = Convert.ToInt32(valuePairs["conceptid"]); }
                 if (valuePairs.TryGetValue("personnelid", out string p)) { _personnelFilters.personnelid = Convert.ToInt32(valuePairs["personnelid"]); }
                 if (valuePairs.TryGetValue("personneltype", out string f)) { _personnelFilters.personneltype = Convert.ToString(valuePairs["personneltype"]); }
 

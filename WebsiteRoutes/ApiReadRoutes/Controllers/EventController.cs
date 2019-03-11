@@ -14,7 +14,7 @@ using ApiReadRoutes.Utils;
 namespace ApiReadRoutes.Controllers
 {
     //[Authorize]
-    [Route("v1/events/{clubid}")]
+    [Route("v2/events/{clubid}")]
     [Produces("application/json")]
     [ApiController]
     public class EventsController : ControllerBase
@@ -30,7 +30,7 @@ namespace ApiReadRoutes.Controllers
 
         // GET v1/events
         [HttpGet]
-        public ActionResult GetEvents(int clubid)
+        public ActionResult GetEvents(int clubid, string datefrom, string dateto, string keyword, int? conceptid = null)
         {
             _logger.LogInformation("Log Start");
 
@@ -42,18 +42,6 @@ namespace ApiReadRoutes.Controllers
             return Ok(ev);
         }
 
-        [HttpGet("{eventid}")]
-        public ActionResult GetEvent(int clubid, int eventid)
-        {
-            _logger.LogInformation("Logging Info");
-            var eventFilters = RequestHelper.GetEventFilters(Request);
-
-
-            List<Event> events = new EventService(clubid, eventFilters).GetEvents();
-
-            var eventone = events.FirstOrDefault((e) => e.eventId == eventid);
-            return Ok(eventone);
-        }
 
         
     }

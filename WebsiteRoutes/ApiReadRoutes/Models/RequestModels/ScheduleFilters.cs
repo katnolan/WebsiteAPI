@@ -10,36 +10,29 @@ namespace ApiReadRoutes.Models
     public class ScheduleFilters
     {
         
-        [DisplayName("dateFrom")]
-        public DateTime? dateFrom { get; set; }
+        
+        public string datefrom { get; set; }
 
-        [DisplayName("dateTo")]
-        public DateTime? dateTo { get; set; }
+        public string dateto { get; set; }
 
-        [DisplayName("studioId")]
-        public string studioid { get; set; }
+        
+        public string conceptid { get; set; }
 
-        [DisplayName("classId")]
         public string classid { get; set; }
 
-        [DisplayName("instructorId")]
-        public string personnelid { get; set; }
+        public string instructorid { get; set; }
 
-        [DisplayName("activityType")]
-        public string activityType { get; set; }
+        public string activitytype { get; set; }
 
-        [DisplayName("status")]
         public string status { get; set; }
 
-        [DisplayName("keyword")]
         public string keyword { get; set; }
 
-        [DisplayName("limit")]
         public int? limit { get; set; }
 
-        [DisplayName("offset")]
         public int? offset { get; set; }
 
+        public int? classtypeid { get; set; }
         //public override string ToString()
         //{
         //    var temp = this.GetType()

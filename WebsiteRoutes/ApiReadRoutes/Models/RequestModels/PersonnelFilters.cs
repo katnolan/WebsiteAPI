@@ -8,13 +8,13 @@ namespace ApiReadRoutes.Models
 {
     public class PersonnelFilters
     {
-        [DisplayName("studioId")]
-        public int? studioid { get; set; }
+        [DisplayName("conceptid")]
+        public int? conceptid { get; set; }
 
-        [DisplayName("personnelId")]
+        [DisplayName("personnelid")]
         public int? personnelid { get; set; }
 
-        [DisplayName("personnelType")]
+        [DisplayName("personneltype")]
         public string personneltype { get; set; }
 
     }

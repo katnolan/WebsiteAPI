@@ -12,14 +12,23 @@ namespace ApiReadRoutes.Services
     {
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
 
-        public ClassTypesService()
+        public ClassTypesService(int clubid, int? conceptid)
         {
-            string query = @"SELECT cc.CategoryId as id, 
-                                    cc.CategoryName as name, 
-                                    cc.MovementTypeId as activityTypeId, 
-                                    a.MovementType as activityType
-                            FROM Data_Layer.ClassCategories cc
-                            INNER JOIN Data_Layer.MovementTypes a on a.MovementTypeId = cc.MovementTypeId";
+            string query = @"select DISTINCT
+                                    ClassTypes.ClassTypeId id, 
+                                    ClassTypes.ClassType name,
+                                    ClassTypes.ConceptId conceptId,
+                                    ClassCategories.CategoryName className,
+                                    IFNULL(ClassCategories.Description, '') description
+                            from Data_Layer_Test.ClassTypes
+                            inner join Data_Layer_Test.ClassCategories on ClassCategories.ClassTypeId = ClassTypes.ClassTypeId and ClassCategories.ClassCategoryId = ClassTypes.CSIServiceId
+                            where ClassCategories.EventFlag = false
+                              and ClassCategories.ClubId = " + clubid.ToString();
+
+            if(conceptid != null)
+            {
+                query = query + " and ClassTypes.ConceptId = " + conceptid.ToString();
+            }
 
             var bqq = new BigQueryQuery();
             var client = bqq.CreateClient();
@@ -38,9 +47,10 @@ namespace ApiReadRoutes.Services
                 ClassTypes types = new ClassTypes
                 {
                     id = Convert.ToInt32(row["id"]),
-                    name = row["name"].ToString(),
-                    activityTypeId = Convert.ToInt32(row["activityTypeId"]),
-                    activityType = row["activityType"].ToString()
+                    classType = row["name"].ToString(),
+                    conceptId = Convert.ToInt32(row["conceptId"]),
+                    className = (row["className"]).ToString(),
+                    description = row["description"].ToString(),
                 };
 
                 classTypes.Add(types);

@@ -34,7 +34,7 @@ namespace ApiReadRoutes.Controllers
 
             if (clubid != null && conceptid != null)
             {
-                var clubConcept = concepts.Where((c) => c.conceptid == conceptid);
+                var clubConcept = concepts.Where((c) => c.conceptid == conceptid && c.clubid == clubid);
                 return Ok(clubConcept);
             }
             else if (conceptid != null)

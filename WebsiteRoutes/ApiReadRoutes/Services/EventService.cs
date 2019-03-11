@@ -78,13 +78,13 @@ namespace ApiReadRoutes.Services
         {
             
 
-            if(ef.studioid == null)
+            if(ef.conceptid == null)
             {
                 return "";
             }
             else
             {
-                string queryStudio = " and s.StudioId = " + ef.studioid.ToString();
+                string queryStudio = " and s.StudioId = " + ef.conceptid.ToString();
                 return queryStudio;
             }
 
@@ -109,8 +109,8 @@ namespace ApiReadRoutes.Services
 
         public static string DateCheck(EventsFilters ef)
         {
-            DateTime df = Convert.ToDateTime(ef.dateFrom);
-            DateTime dt = Convert.ToDateTime(ef.dateTo);
+            DateTime df = Convert.ToDateTime(ef.datefrom);
+            DateTime dt = Convert.ToDateTime(ef.dateto);
             
 
             if (df == null)
@@ -140,7 +140,7 @@ namespace ApiReadRoutes.Services
                     eventId = Convert.ToInt32(row["eventid"]),
                     name = row["name"].ToString(),
                     description = row["description"].ToString(),
-                    studioId = Convert.ToInt32(row["studioid"]),
+                    conceptId = Convert.ToInt32(row["studioid"]),
                     startDate = row["date"].ToString(),
                     startTime = row["time"].ToString(),
                     priceMember = Convert.ToDouble(row["memberamount"]),

@@ -15,7 +15,7 @@ using ApiReadRoutes.Utils;
 namespace ApiReadRoutes.Controllers
 {
     //[Authorize]
-    [Route("v1/personnel/{clubid}")]
+    [Route("v2/personnel/{clubid}")]
     [Produces("application/json")]
     [ApiController]
     public class PersonnelController : ControllerBase
@@ -31,7 +31,7 @@ namespace ApiReadRoutes.Controllers
 
         // GET v1/personnel/{clubid}?studioid={studioid}&personnelid={personnelid}&personneltype={personneltype}
         [HttpGet]
-        public ActionResult GetEmployees(int clubid)
+        public ActionResult GetEmployees(int clubid, string personneltype, int? conceptid = null, int? personnelid = null)
         {
 
             _logger.LogInformation("Logging Info");
@@ -40,7 +40,7 @@ namespace ApiReadRoutes.Controllers
 
             List<Personnel> employees = new PersonnelService(clubid, filters).GetPersonnel();
 
-            var emp = employees.Where((e) => e.clubid == clubid);
+            var emp = employees.Where((e) => e.clubId == clubid);
             return Ok(emp);
         }
 

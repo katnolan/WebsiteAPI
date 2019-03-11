@@ -31,7 +31,7 @@ namespace ApiReadRoutes.Services
             string query = @"SELECT employeeid,
                                     employeename,
                                     clubid,
-                                    Studios,
+                                    Concepts,
                                     jobtitleid,
                                     jobtitle
                             FROM
@@ -42,30 +42,42 @@ namespace ApiReadRoutes.Services
                                         Employees.ClubId clubid,
                                         ARRAY_CONCAT(
                                         ARRAY(
-                                         SELECT DISTINCT COALESCE(Resources.StudioId,0) as Studios
+                                         SELECT DISTINCT COALESCE(ClassTypes.ConceptId,0) as Studios
                                          FROM
-                                         Data_Layer.Events
-                                         INNER JOIN Data_Layer.Resources
+                                         Data_Layer_Test.Events
+                                         INNER JOIN Data_Layer_Test.Resources
                                          ON Resources.ResourceId = Events.ResourceId
+                                         INNER JOIN Data_Layer_Test.ClassSchedules 
+                                         ON ClassSchedules.ClassScheduleId = Events.ClassScheduleId
+                                         INNER JOIN Data_Layer_Test.ClassCategories
+                                         ON ClassCategories.ClassCategoryId = ClassSchedules.ClassCategoryId
+                                         INNER JOIN Data_Layer_Test.ClassTypes
+                                         ON ClassTypes.ClassTypeId = ClassCategories.ClassTypeId
                                          WHERE Events.Date = CURRENT_DATE()
-                                           and Events.EmployeeId = Employees.EmployeeId),
+                                           and Events.EmployeeId = Employees.CSIEmployeeId),
                                         ARRAY(
-                                         SELECT DISTINCT COALESCE(Resources.StudioId,0) as Studios
+                                         SELECT DISTINCT COALESCE(ClassTypes.ConceptId,0) as Studios
                                          FROM
-                                         Data_Layer.Classes
-                                         INNER JOIN Data_Layer.Resources
+                                         Data_Layer_Test.Classes
+                                         INNER JOIN Data_Layer_Test.Resources
                                          ON Resources.ResourceId = Classes.ResourceId
+                                         INNER JOIN Data_Layer_Test.ClassSchedules 
+                                         ON ClassSchedules.ClassScheduleId = Classes.ClassScheduleId
+                                         INNER JOIN Data_Layer_Test.ClassCategories
+                                         ON ClassCategories.ClassCategoryId = ClassSchedules.ClassCategoryId
+                                         INNER JOIN Data_Layer_Test.ClassTypes
+                                         ON ClassTypes.ClassTypeId = ClassCategories.ClassTypeId
                                          WHERE Classes.Date = CURRENT_DATE()
-                                           and Classes.EmployeeId = Employees.EmployeeId)
-                                        ) Studios,
+                                           and Classes.EmployeeId = Employees.CSIEmployeeId)
+                                        ) Concepts,
                                         Employees.JobTitleId jobtitleid,
                                         CASE WHEN Employees.ClubID = 30 THEN RTRIM(JobTitles.FrenchName)
                                              ELSE RTRIM(JobTitles.EnglishName)
                                         END jobtitle,
                                         JobTitles.EnglishName             
                                       FROM
-                                      Data_Layer.Employees
-                                        INNER JOIN Data_Layer.JobTitles
+                                      Data_Layer_Test.Employees
+                                        INNER JOIN Data_Layer_Test.JobTitles
                                         ON JobTitles.JobTitleId = Employees.JobTitleId
                         ) a
                         WHERE a.ClubId =  " + clubid.ToString();
@@ -76,26 +88,26 @@ namespace ApiReadRoutes.Services
             }
             else
             {
-                string s = StudioCheck(pf);
+                string c = ConceptCheck(pf);
                 string p = PersonnelCheck(pf);
                 string t = TypeCheck(pf);
 
-                return query + s + p + t;
+                return query + c + p + t;
             }
         }
 
 
-        public static string StudioCheck(PersonnelFilters pf)
+        public static string ConceptCheck(PersonnelFilters pf)
         {
-            string queryStudio = " and " + pf.studioid.ToString() + " IN UNNEST(a.Studios)";
+            string queryConcept = " and " + pf.conceptid.ToString() + " IN UNNEST(a.Concepts)";
 
-            if(pf.studioid == null)
+            if(pf.conceptid == null)
             {
                 return "";
             }
             else
             {
-                return queryStudio;
+                return queryConcept;
             }
  
         }
@@ -140,12 +152,12 @@ namespace ApiReadRoutes.Services
             {
                 Personnel employee = new Personnel
                 {
-                    personnelid = Convert.ToInt32(row["employeeid"]),
+                    personnelId = Convert.ToInt32(row["employeeid"]),
                     name = row["employeename"].ToString(),
-                    clubid = Convert.ToInt32(row["clubid"]),
-                    studioid = (long[])row["Studios"],
-                    personneltypeid = Convert.ToInt32(row["jobtitleid"]),
-                    personneltype = row["jobtitle"].ToString()
+                    clubId = Convert.ToInt32(row["clubid"]),
+                    conceptId = (long[])row["Concepts"],
+                    personnelTypeId = Convert.ToInt32(row["jobtitleid"]),
+                    personnelType = row["jobtitle"].ToString()
                 };
 
                 employeeList.Add(employee);

@@ -7,26 +7,26 @@ namespace ApiReadRoutes.Models
 {
     public class Personnel
     {
-        public int personnelid { get; set; }             // EmployeeId
+        public int personnelId { get; set; }             // EmployeeId
         public string name { get; set; }
-        public int clubid { get; set; }
-        public long[] studioid { get; set; }
-        public int personneltypeid { get; set; }          // Job Title
-        public string personneltype { get; set; }
+        public int clubId { get; set; }
+        public long[] conceptId { get; set; }
+        public int personnelTypeId { get; set; }          // Job Title
+        public string personnelType { get; set; }
 
         public Personnel()
         {
 
         }
 
-        public Personnel(int empid, string n, int club, long[] studio, int jobid, string job)
+        public Personnel(int empid, string n, int club, long[] concept, int jobid, string job)
         {
-            personnelid = empid;
+            personnelId = empid;
             name = n;
-            clubid = club;
-            studioid = studio;
-            personneltypeid = jobid;
-            personneltype = job;
+            clubId = club;
+            conceptId = concept;
+            personnelTypeId = jobid;
+            personnelType = job;
 
         }
 

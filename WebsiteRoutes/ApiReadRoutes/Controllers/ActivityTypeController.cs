@@ -11,7 +11,7 @@ using ApiReadRoutes.Services;
 namespace ApiReadRoutes.Controllers
 {
     //[Authorize]
-    [Route("/v1/activitytype")]
+    [Route("v1/activitytype")]
     [Produces("application/json")]
     [ApiController]
     public class ActivityTypeController : ControllerBase
