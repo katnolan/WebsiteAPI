@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ApiReadRoutes.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("v2/concepts/")]
     [Produces("application/json")]
     [ApiController]

@@ -13,7 +13,7 @@ using ApiReadRoutes.Services;
 
 namespace ApiReadRoutes.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("v1/clubs")]
     [Produces("application/json")]
     [ApiController]

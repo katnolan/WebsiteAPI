@@ -14,7 +14,7 @@ using ApiReadRoutes.Utils;
 
 namespace ApiReadRoutes.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("v2/personnel/{clubid}")]
     [Produces("application/json")]
     [ApiController]
