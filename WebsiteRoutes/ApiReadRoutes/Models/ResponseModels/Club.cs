@@ -9,10 +9,9 @@ namespace ApiReadRoutes.Models
     {
         public int clubid { get; set; }
         public string clubname { get; set; }
-        public int csiid { get; set; }
-        public int gpid { get; set; }
-        public string location { get; set; }
         public bool isActive { get; set; }
+        public string location { get; set; }
+        public int language { get; set; }
 
 
         public Club()
@@ -20,14 +19,14 @@ namespace ApiReadRoutes.Models
 
         }
 
-        public Club(int id, string name, int cid, int gid, string city, bool act)
+        public Club(int id, string name, int cid, int gid, string city, bool act, int lang)
         {
+
             clubid = id;
             clubname = name;
-            csiid = cid;
-            gpid = gid;
-            location = city;
             isActive = act;
+            location = city;
+            language = lang;
 
         }
     }

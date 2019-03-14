@@ -9,12 +9,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ApiReadRoutes.Models;
+using ApiReadRoutes.Models.ResponseModels;
 using ApiReadRoutes.Services;
 
 namespace ApiReadRoutes.Controllers
 {
     [Authorize]
-    [Route("v1/clubs")]
+    [Route("v2/clubs")]
     [Produces("application/json")]
     [ApiController]
     public class ClubsController : ControllerBase
@@ -26,37 +27,33 @@ namespace ApiReadRoutes.Controllers
         }
        
 
-        List<Club> clubs = new ClubService().GetClubs();
+        
 
-        // GET v1/clubs?clubid={clubid}
-        [HttpGet]
+        // GET v2/clubs?clubid={clubid}
+        [HttpGet("")]
         public ActionResult GetClubs(int? clubid = null)
         {
 
-            _logger.LogInformation("Logging Info");
+            _logger.LogInformation("Logging Clubs Info");
 
-            if(clubid != null)
-            {
-                var club = clubs.FirstOrDefault((c) => c.clubid == clubid);
-                return Ok(club);
-            }
-            else
-            {
-                return Ok(clubs);
-            }
+            List<Club> clubs = new ClubService(null, clubid).GetClubs();
+
+            return Ok(clubs);
             
         }
 
-        [HttpGet("{clubid}")]
-        public ActionResult GetClub(int? clubid = null)
+        // GET v2/clubs/details?siteid={siteid}&clubid={clubid}
+        [HttpGet("details")]
+        public ActionResult GetClubDetails(int? siteid = null, int? clubid = null)
         {
+            _logger.LogInformation("Logging ClubDetails Info");
 
-            _logger.LogInformation("Logging Info");
+            List<ClubDetails> details = new ClubService(siteid, clubid).GetClubDetails();
 
-            var club = clubs.FirstOrDefault((c) => c.clubid == clubid);
-            return Ok(club);
+            return Ok(details);
 
         }
+
 
     }
 }
