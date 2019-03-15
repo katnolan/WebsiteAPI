@@ -12,17 +12,23 @@ namespace ApiReadRoutes.Models
     public class EventsFilters
     {
 
+
         [DisplayName("conceptid")]
         public int? conceptid { get; set; }
-        
+
+        [DisplayName("resourceid")]
+        public int? resourceid { get; set; }
+
+        [DisplayName("keyword")]
+        public string keyword { get; set; }
+
         [DisplayName("datefrom")]
         public string datefrom { get; set; }
 
         [DisplayName("dateto")]
         public string dateto { get; set; }
 
-        [DisplayName("keyword")]
-        public string keyword { get; set; }
+
 
         //public override string ToString()
         //{

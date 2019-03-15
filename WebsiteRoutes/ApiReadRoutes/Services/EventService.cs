@@ -17,9 +17,9 @@ namespace ApiReadRoutes.Services
 
         }
 
-        public EventService(int clubid, EventsFilters eventsFilters)
+        public EventService(int clubid, EventsFilters eventsFilters, int? eventid = null)
         {
-            string query = BuildQuery(clubid, eventsFilters);
+            string query = BuildQuery(clubid, eventsFilters, eventid);
 
 
             var bqq = new BigQueryQuery();
@@ -28,50 +28,87 @@ namespace ApiReadRoutes.Services
             Results.Add(bqq.GetBigQueryResults(client, job));
         }
 
-        public static string BuildQuery(int clubid, EventsFilters ef)
+        public static string BuildQuery(int clubid, EventsFilters ef, int? eventid = null)
         {
             string query = @"SELECT DISTINCT
-                                    e.ScheduleId eventid, 
-                                    IF(e.EventName is null, '', e.EventName) name,
-                                    e.Description description,
-                                    s.StudioId studioid,
-                                    Date date,
-                                    TimeFrom time,
-                                    CAST(NonMemberAmount as FLOAT64) nonmemberamount,
+                                    e.EventId eventid, 
+                                    IFNULL(cc.CategoryName, '') name,
+                                    IFNULL(cc.Description, '') description,
+                                    DATETIME(e.Date, e.TimeFrom) startdate,
+                                    DATETIME(e.Date, e.TimeTo) enddate,
                                     CAST(MemberAmount as FLOAT64) memberamount,
-                                    NonMemberFlag nonmember,
-                                    CanBook canbook,
+                                    CAST(NonMemberAmount as FLOAT64) nonmemberamount,
+                                    e.CanBook canbook,                                  
                                     e.ClubId clubid,
-                                    c.ClubName location,
-                                    Attendance attendance,
-                                    Capacity capacity,
-                                    EmployeeId personnelid
-                             FROM Data_Layer.Events e 
-                             INNER JOIN Data_Layer.Resources r 
+                                    cl.ClubName location,
+                                    e.Attendance attendance,
+                                    e.Capacity capacity,
+                                    IFNULL(em.EmployeeId,0) personnelid,
+                                    cs.CSIScheduleGUID scheduleGUID,
+                                    cc.MovementTypeId  activityTypeId,
+                                    cc.FamilyFlag familyFlag,
+                                    e.resourceId,
+                                    c.conceptId
+                             FROM Data_Layer_Test.Events e 
+                             Left JOIN Data_Layer_Test.ClassSchedules cs
+                                ON e.ClassScheduleId = cs.ClassScheduleId
+                             left JOIN Data_Layer_Test.ClassCategories cc
+                                ON cc.ClassCategoryId = cs.ClassCategoryId
+                             LEFT JOIN Data_Layer_Test.ClassTypes ct
+                                ON ct.ClassTypeId = cc.ClassTypeId
+                             LEFT JOIN Data_Layer_Test.Concepts c
+                                ON c.ConceptId = ct.ConceptId
+                             LEFT JOIN Data_Layer_Test.Resources r 
                                 ON e.ResourceId = r.ResourceId
-                             INNER JOIN Data_Layer.Studios s
-                                ON r.StudioId = s.StudioId
-                             INNER JOIN Data_Layer.Clubs c
-                                ON e.ClubId = c.ClubId
-                             WHERE DATETIME (e.Date, TimeFrom) >= CURRENT_DATETIME()
-                               and e.ClubId = " + clubid.ToString();
+                             LEFT JOIN Data_Layer_Test.Employees em
+                                ON em.CSIEmployeeId = e.EmployeeId
+                             LEFT JOIN Data_Layer_Test.Clubs cl
+                                ON e.ClubId = cl.ClubId
+                             WHERE --DATETIME (e.Date, TimeFrom) >= CURRENT_DATETIME()
+                               --and 
+                               e.ClubId = " + clubid.ToString();
 
 
 
             if(ef == null)
             {
-                return query;
+                if(eventid == null)
+                {
+                    return query;
+                }
+                else
+                {
+                    string e = EventCheck(eventid);
+                    return query = query + e;
+                }
             }
             else
             {
                 string s = StudioCheck(ef);
                 string d = DateCheck(ef);
                 string k = KeywordCheck(ef);
+                string r = ResourceCheck(ef);
+                string e = EventCheck(eventid);
 
-                return query = query + s + d + k;
+                return query = query + s + d + k + r + e;
 
             }
 
+        }
+
+        public static string EventCheck(int? eventid)
+        {
+            if (eventid == null)
+            {
+                return "";
+            }
+            else
+            {
+
+                string e = " and e.EventId = " + eventid.ToString();
+
+                return e;
+            }
         }
 
         public static string StudioCheck(EventsFilters ef)
@@ -125,6 +162,23 @@ namespace ApiReadRoutes.Services
 
         }
 
+        public static string ResourceCheck(EventsFilters ef)
+        {
+
+
+            if (ef.resourceid == null)
+            {
+                return "";
+            }
+            else
+            {
+                string queryStudio = " and s.StudioId = " + ef.resourceid.ToString();
+                return queryStudio;
+            }
+
+
+        }
+
         public List<Event> GetEvents()
         {
             List<Event> events = new List<Event>();
@@ -140,18 +194,21 @@ namespace ApiReadRoutes.Services
                     eventId = Convert.ToInt32(row["eventid"]),
                     name = row["name"].ToString(),
                     description = row["description"].ToString(),
-                    conceptId = Convert.ToInt32(row["studioid"]),
-                    startDate = row["date"].ToString(),
-                    startTime = row["time"].ToString(),
+                    startDate = row["startdate"].ToString(),
+                    endDate = row["enddate"].ToString(),
                     priceMember = Convert.ToDouble(row["memberamount"]),
                     priceNonMember = Convert.ToDouble(row["nonmemberamount"]),
-                    nonMember = Convert.ToBoolean(row["nonmember"]),
                     canBook = Convert.ToBoolean(row["canbook"]),
                     clubId = Convert.ToInt32(row["clubid"]),
                     location = row["location"].ToString(),
                     attending = Convert.ToInt32(row["attendance"]),
                     attendingCapacity = Convert.ToInt32(row["capacity"]),
-                    personnelId = Convert.ToInt32(row["personnelid"])
+                    personnelId = Convert.ToInt32(row["personnelid"]),
+                    scheduleGUID = row["scheduleGUID"].ToString(),
+                    activityTypeId = Convert.ToInt32(row["activityTypeId"]),
+                    familyFlag = Convert.ToBoolean(row["familyFlag"]),
+                    resourceId = Convert.ToInt32(row["resourceId"]),
+                    conceptId = Convert.ToInt32(row["conceptId"])
                 };
 
 

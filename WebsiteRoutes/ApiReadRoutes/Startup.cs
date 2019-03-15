@@ -35,10 +35,10 @@ namespace ApiReadRoutes
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen((c) =>
             {
-                c.SwaggerDoc("v1", new Info
+                c.SwaggerDoc("v2", new Info
                 {
                     Title = "Website Read Routes",
-                    Version = "v1",
+                    Version = "v2",
                     Description = "Website/App DataLayer Read Routes",
                     Contact = new Contact
                     {
@@ -82,7 +82,7 @@ namespace ApiReadRoutes
                 // specifying the Swagger JSON endpoint.
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Website Read Routes V1");
+                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "Website Read Routes V2");
                 });
             }
             else
