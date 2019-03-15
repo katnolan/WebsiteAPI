@@ -30,32 +30,31 @@ namespace ApiReadRoutes.Services
 
         public static string BuildQuery(int clubid, EventsFilters ef, int? eventid = null)
         {
-            string query = @"SELECT DISTINCT
-                                    e.EventId eventid, 
-                                    IFNULL(cc.CategoryName, '') name,
-                                    IFNULL(cc.Description, '') description,
-                                    DATETIME(e.Date, e.TimeFrom) startdate,
-                                    DATETIME(e.Date, e.TimeTo) enddate,
-                                    CAST(MemberAmount as FLOAT64) memberamount,
-                                    CAST(NonMemberAmount as FLOAT64) nonmemberamount,
-                                    e.CanBook canbook,                                  
-                                    e.ClubId clubid,
-                                    cl.ClubName location,
-                                    e.Attendance attendance,
-                                    e.Capacity capacity,
-                                    IFNULL(em.EmployeeId,0) personnelid,
-                                    cs.CSIScheduleGUID scheduleGUID,
-                                    cc.MovementTypeId  activityTypeId,
-                                    cc.FamilyFlag familyFlag,
-                                    e.resourceId,
-                                    c.conceptId
-                             FROM Data_Layer_Test.Events e 
+            string mainquery = @" select e.eventid, 
+                                      IFNULL(cc.CategoryName, '') name,
+                                      IFNULL(cc.Description, '') description,
+                                      DATETIME(e.Date, e.TimeFrom) startdate,
+                                      DATETIME(e.Date, e.TimeTo) enddate,
+                                      CAST(MemberAmount as FLOAT64) memberamount,
+                                      CAST(NonMemberAmount as FLOAT64) nonmemberamount,
+                                      e.CanBook canbook,                                  
+                                      e.ClubId clubid,
+                                      cl.ClubName location,
+                                      e.Attendance attendance,
+                                      IFNULL(e.Capacity, 20) capacity,
+                                      ARRAY_AGG(DISTINCT IFNULL(em.employeeid, 0)) personnelid,
+                                      cs.CSIScheduleGUID scheduleGUID,
+                                      ARRAY_AGG(DISTINCT IFNULL(cc.MovementTypeId,0)) activityTypeId,
+                                      cc.FamilyFlag familyFlag,
+                                      ARRAY_AGG(DISTINCT IFNULL(e.resourceId, 0)) resourceId,
+                                      c.conceptId
+                               FROM Data_Layer_Test.Events e 
                              Left JOIN Data_Layer_Test.ClassSchedules cs
                                 ON e.ClassScheduleId = cs.ClassScheduleId
                              left JOIN Data_Layer_Test.ClassCategories cc
                                 ON cc.ClassCategoryId = cs.ClassCategoryId
                              LEFT JOIN Data_Layer_Test.ClassTypes ct
-                                ON ct.ClassTypeId = cc.ClassTypeId
+                                ON ct.ClassTypeId = cc.ClassTypeId and ct.CSIServiceId = cc.ClassCategoryId
                              LEFT JOIN Data_Layer_Test.Concepts c
                                 ON c.ConceptId = ct.ConceptId
                              LEFT JOIN Data_Layer_Test.Resources r 
@@ -64,22 +63,37 @@ namespace ApiReadRoutes.Services
                                 ON em.CSIEmployeeId = e.EmployeeId
                              LEFT JOIN Data_Layer_Test.Clubs cl
                                 ON e.ClubId = cl.ClubId
-                             WHERE --DATETIME (e.Date, TimeFrom) >= CURRENT_DATETIME()
-                               --and 
-                               e.ClubId = " + clubid.ToString();
+                                where e.Clubid = " + clubid.ToString();
 
+            string groupQuery = @" group by e.eventid,
+                                         cc.CategoryName,
+                                         cc.Description,
+                                         e.Date,
+                                         e.TimeFrom,
+                                         e.TimeTo,
+                                         cs.MemberAmount,
+                                         cs.NonMemberAmount,
+                                         e.CanBook,
+                                         e.ClubId,
+                                         cl.ClubName,
+                                         e.Attendance,
+                                         e.Capacity,
+                                         cs.CSIScheduleGUID,
+                                         cc.FamilyFlag,
+                                         c.conceptId
+                                order by  e.eventid";
 
 
             if(ef == null)
             {
                 if(eventid == null)
                 {
-                    return query;
+                    return mainquery + groupQuery;
                 }
                 else
                 {
                     string e = EventCheck(eventid);
-                    return query = query + e;
+                    return mainquery + e + groupQuery;
                 }
             }
             else
@@ -90,7 +104,7 @@ namespace ApiReadRoutes.Services
                 string r = ResourceCheck(ef);
                 string e = EventCheck(eventid);
 
-                return query = query + s + d + k + r + e;
+                return mainquery + s + d + k + r + e + groupQuery ;
 
             }
 
@@ -105,9 +119,9 @@ namespace ApiReadRoutes.Services
             else
             {
 
-                string e = " and e.EventId = " + eventid.ToString();
+                string queryEvent = " and e.EventId = " + eventid.ToString();
 
-                return e;
+                return queryEvent;
             }
         }
 
@@ -121,7 +135,7 @@ namespace ApiReadRoutes.Services
             }
             else
             {
-                string queryStudio = " and s.StudioId = " + ef.conceptid.ToString();
+                string queryStudio = " and c.ConceptId = " + ef.conceptid.ToString();
                 return queryStudio;
             }
 
@@ -137,7 +151,7 @@ namespace ApiReadRoutes.Services
             }
             else
             {
-                string queryKeyword = " and e.Description LIKE '%" + ef.keyword.ToString() + "%";
+                string queryKeyword = " and cc.CategoryName LIKE '%" + ef.keyword.ToString() + "%'";
                 return queryKeyword;
             }
 
@@ -150,9 +164,16 @@ namespace ApiReadRoutes.Services
             DateTime dt = Convert.ToDateTime(ef.dateto);
             
 
-            if (df == null)
+            if (ef.datefrom == null)
             {
                 return "";
+            }
+            else if (ef.datefrom != null && ef.dateto == null)
+            {
+                dt = Convert.ToDateTime(ef.datefrom);
+
+                string queryDate = " and DATETIME(e.Date, TimeFrom) >= '" + df.ToString("yyyy-MM-dd") + "' and DATETIME(e.Date, TimeFrom ) <= " + dt.ToString("yyyy-MM-dd");
+                return queryDate;
             }
             else
             {
@@ -172,8 +193,8 @@ namespace ApiReadRoutes.Services
             }
             else
             {
-                string queryStudio = " and s.StudioId = " + ef.resourceid.ToString();
-                return queryStudio;
+                string queryResource = " and r.ResourceId = " + ef.resourceid.ToString();
+                return queryResource;
             }
 
 
@@ -203,11 +224,11 @@ namespace ApiReadRoutes.Services
                     location = row["location"].ToString(),
                     attending = Convert.ToInt32(row["attendance"]),
                     attendingCapacity = Convert.ToInt32(row["capacity"]),
-                    personnelId = Convert.ToInt32(row["personnelid"]),
+                    personnelId = (long[])(row["personnelid"]),
                     scheduleGUID = row["scheduleGUID"].ToString(),
-                    activityTypeId = Convert.ToInt32(row["activityTypeId"]),
+                    activityTypeId = (long[])(row["activityTypeId"]),
                     familyFlag = Convert.ToBoolean(row["familyFlag"]),
-                    resourceId = Convert.ToInt32(row["resourceId"]),
+                    resourceId = (long[])(row["resourceId"]),
                     conceptId = Convert.ToInt32(row["conceptId"])
                 };
 

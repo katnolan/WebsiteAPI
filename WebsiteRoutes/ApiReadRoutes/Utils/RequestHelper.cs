@@ -51,8 +51,8 @@ namespace ApiReadRoutes.Utils
             {
                 if(valuePairs.TryGetValue("conceptid", out string s)) { _eventsFilters.conceptid = Convert.ToInt32(valuePairs["conceptid"]); } 
                 if(valuePairs.TryGetValue("resourceid", out string r)) { _eventsFilters.resourceid = Convert.ToInt32(valuePairs["resourceid"]);  }
-                if(valuePairs.TryGetValue("datefrom", out string f)) { _eventsFilters.datefrom = valuePairs["datefrom"]; }
-                if (valuePairs.TryGetValue("dateto", out string t)) { _eventsFilters.dateto = valuePairs["dateto"]; }
+                if(valuePairs.TryGetValue("datefrom", out string f)) { _eventsFilters.datefrom = valuePairs["datefrom"].ToString(); }
+                if (valuePairs.TryGetValue("dateto", out string t)) { _eventsFilters.dateto = valuePairs["dateto"].ToString(); }
                 if(valuePairs.TryGetValue("keyword", out string k)) { _eventsFilters.keyword = valuePairs["keyword"]; }
 
                 return _eventsFilters;

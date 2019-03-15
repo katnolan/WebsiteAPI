@@ -19,11 +19,11 @@ namespace ApiReadRoutes.Models
         public string location { get; set; }
         public int attending { get; set; }
         public int attendingCapacity { get; set; }
-        public int personnelId { get; set; }
+        public long[] personnelId { get; set; }
         public string scheduleGUID { get; set; }
-        public int activityTypeId { get; set; }
+        public long[] activityTypeId { get; set; }
         public bool familyFlag { get; set; }
-        public int resourceId { get; set; }
+        public long[] resourceId { get; set; }
         public int conceptId { get; set; }
 
         public Event()
@@ -31,7 +31,7 @@ namespace ApiReadRoutes.Models
 
         }
 
-        public Event(int eid, string n, string desc, int studio, string sdate, string edate, double nmamt, double mamt, bool nm, bool cb, int club, string loc,  int att, int cap, int employeeid, string guid, int at, bool fam, int res)
+        public Event(int eid, string n, string desc, int studio, string sdate, string edate, double nmamt, double mamt, bool nm, bool cb, int club, string loc,  int att, int cap, long[] employeeid, string guid, long[] at, bool fam, long[] res)
         {
             eventId = eid;
             name = n;
