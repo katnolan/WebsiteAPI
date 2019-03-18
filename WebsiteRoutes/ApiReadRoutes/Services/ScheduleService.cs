@@ -31,13 +31,8 @@ namespace ApiReadRoutes.Services
                                     IFNULL(ClassCategories.CategoryName,'') name,
                                     IFNULL(ClassCategories.Description, '') shortDescription,
                                     IFNULL(MovementTypes.MovementTypeId, 0) activityTypeId,
-                                    ARRAY (SELECT DISTINCT IFNULL(employeeid,0)
-                                           FROM Data_Layer_Test.Classes c
-                                           WHERE Classes.classid = c.classid) personnelid,
-                                    ARRAY( SELECT DISTINCT COALESCE(CONCAT(e.FirstName, ' ', e.LastName), CONCAT(b.fname, ' ', b.lname),'') F
-                                           FROM Data_Layer_Test.Employees e
-                                           RIGHT JOIN AloomaTestBeta.EMPLOYEES b on b.employeeid = e.CSIEmployeeId
-                                           where b.employeeId = Classes.employeeid) personnelName,
+                                    ARRAY_AGG (Distinct IFNULL(Classes.EmployeeId, 0)) personnelid,
+                                    ARRAY_AGG (Distinct IFNULL(CONCAT(Employees.FirstName, ' ', Employees.LastName),'')) personnelName,
                                     IFNULL(DATETIME(Classes.Date, Classes.TimeFrom), '1900-01-01') startDateTime,
                                     IFNULL(DATETIME(Classes.Date, Classes.TimeTo), '1900-01-01') endDateTime,
                                     IFNULL(ClassSchedules.ClassScheduleType,'') activityCode,
@@ -57,10 +52,7 @@ namespace ApiReadRoutes.Services
                                          WHEN ClassSchedules.NonMemberAmount > 0 then true
                                          ELSE false
                                     END isPaid,
-                                    ARRAY(select  IFNULL(resourceid,0)
-                                          from Data_Layer_Test.Classes c
-                                          WHERE  c.ClassId = Classes.ClassId
-                                          ) resourceId,
+                                    ARRAY_AGG (Distinct IFNULL(Classes.resourceId,0)) resourceId,
                                     IFNULL(Classes.Capacity,0) attendingCapacity,
                                     IFNULL(ClassSchedules.CSIScheduleGUID,'') scheduleGUID,
                                     IFNULL(ClassCategories.ClassTypeId,0) ClassTypeId,
@@ -73,15 +65,43 @@ namespace ApiReadRoutes.Services
                             LEFT JOIN Data_Layer_Test.MovementTypes on MovementTypes.MovementTypeId = ClassCategories.MovementTypeId
                             LEFT JOIN Data_Layer_Test.ClassTypes on ClassTypes.ClassTypeId = ClassCategories.ClassTypeId and ClassTypes.CSIServiceId = ClassCategories.ClassCategoryId
                             LEFT JOIN Data_Layer_Test.Concepts on Concepts.ConceptId = ClassTypes.ConceptId and Concepts.ClubId = ClassTypes.ClubId
+                            LEFT JOIN Data_Layer_Test.Employees on Employees.CSIEmployeeId = Classes.EmployeeId
                             WHERE Classes.Date >= CURRENT_DATE() and 
                               ClassCategories.MovementTypeId is not null and 
                               Classes.ClubId = " + clubid.ToString();
 
 
+            string groupQuery = @" GROUP BY ClassId,
+                                     ClubId,
+                                     CategoryName,
+                                     Description,
+                                     MovementTypes.MovementTypeId,
+                                     Date,
+                                     TimeFrom,
+                                     TimeTo,
+                                     ClassScheduleType,
+                                     ConceptId,
+                                     Concept,
+                                     Attendance,
+                                     ClassScheduleType,
+                                     ClassSchedules.DateFrom,
+                                     ClassSchedules.DateTo,
+                                     NonMemberFlag,
+                                     MemberAmount,
+                                     NonMemberAmount,
+                                     Capacity,
+                                     CSIScheduleGUID,
+                                     ClassTypeId,
+                                     FamilyFlag,
+                                     DropInFlag,
+                                     Intensity
+                                     order by classid ";
+
+
 
             if (cf == null)
             {
-                return query;
+                return query + groupQuery;
             }
             else
             {
@@ -96,7 +116,7 @@ namespace ApiReadRoutes.Services
                 string ct = ClassTypeCheck(cf);
               
 
-                return query = query + d + s + c + p + at + st + k + lo + ct;
+                return query = query + d + s + c + p + at + st + k + ct + groupQuery + lo;
             }
 
         }
