@@ -13,9 +13,46 @@ namespace ApiReadRoutes.Services
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
         //@"SELECT TO_JSON_STRING(t, true) FROM(SELECT ClubId clubid, ClubName clubname, Location location, isActive FROM Data_Layer.Clubs WHERE DivisionId = 2) t";
 
-        public ConceptService()
+        public ConceptService(int? clubid = null, int? conceptid = null, int? language = 0)
         {
-            string query = @"SELECT ConceptId conceptid, Concept conceptname, ClubId clubid, isActive from Data_Layer_Test.Concepts";
+            string query = "";
+            if(language == 0 || language == 2)
+            {
+                query = @"SELECT ConceptId conceptid, IFNULL(Concept, '') conceptname, ClubId clubid, isActive from Data_Layer_Test.Concepts";
+
+                if(clubid != null)
+                {
+                    query = query + " WHERE ClubId = " + clubid.ToString();
+                }
+                else if(clubid != null && conceptid != null)
+                {
+                    query = query + " WHERE ClubId = " + clubid.ToString() + " and ConceptId = " + conceptid.ToString();
+                }
+                else if (conceptid != null)
+                {
+                    query = query + " WHERE ConceptId = " + conceptid.ToString();
+                }
+
+            }
+            else
+            {
+                query = @"SELECT ConceptId conceptid, IFNULL(FrenchConcept, '') conceptname, ClubId clubid, isActive from Data_Layer_Test.Concepts";
+
+                if(clubid != null)
+                {
+                    query = query + " WHERE ClubId = " + clubid.ToString();
+                }
+                else if (clubid != null && conceptid != null)
+                {
+                    query = query + " WHERE ClubId = " + clubid.ToString() + " and ConceptId = " + conceptid.ToString();
+                }
+                else if (conceptid != null)
+                {
+                    query = query + " WHERE ConceptId = " + conceptid.ToString();
+                }
+
+            }
+            
 
 
             var bqq = new BigQueryQuery();

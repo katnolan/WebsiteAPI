@@ -33,6 +33,8 @@ namespace ApiReadRoutes.Models
         public int? offset { get; set; }
 
         public int? classtypeid { get; set; }
+
+        public int? language { get; set; }
         //public override string ToString()
         //{
         //    var temp = this.GetType()

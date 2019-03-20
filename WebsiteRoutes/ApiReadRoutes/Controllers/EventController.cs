@@ -30,7 +30,7 @@ namespace ApiReadRoutes.Controllers
 
         // GET v2/events/{clubid}
         [HttpGet]
-        public ActionResult GetEvents(int clubid, string datefrom, string dateto, string keyword, int? conceptid = null, int? resourceid = null)
+        public ActionResult GetEvents(int clubid, string datefrom, string dateto, string keyword, int? conceptid = null, int? resourceid = null, int? language = 0)
         {
             _logger.LogInformation("Log Start");
 
@@ -38,7 +38,15 @@ namespace ApiReadRoutes.Controllers
             
             List<Event> events = new EventService(clubid, eventFilters, null).GetEvents();
 
-            return Ok(events);
+            if(events.Count() == 0)
+            {
+                return NotFound("No result");
+            }
+            else
+            {
+                return Ok(events);
+            }
+            
         }
 
         //GET v2/events/{clubid}/{eventid}
@@ -51,7 +59,15 @@ namespace ApiReadRoutes.Controllers
 
             List<Event> events = new EventService(clubid, eventFilters, eventid).GetEvents();
 
-            return Ok(events);
+            if(events.Count() == 0)
+            {
+                return NotFound("No result");
+            }
+            else
+            {
+                return Ok(events);
+            }
+            
 
             
         }

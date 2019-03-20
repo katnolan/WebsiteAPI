@@ -25,11 +25,11 @@ namespace ApiReadRoutes.Controllers
 
         //GET /v1/classtypes
         [HttpGet]
-        public ActionResult GetClassTypes(int clubid, int? conceptid = null)
+        public ActionResult GetClassTypes(int clubid, int? conceptid = null, int? language = 0)
         {
             _logger.LogInformation("Logging Information");
 
-            List<ClassTypes> ct = new ClassTypesService(clubid, conceptid).GetClassTypes();
+            List<ClassTypes> ct = new ClassTypesService(clubid, conceptid, language).GetClassTypes();
 
             if(conceptid == null)
             {

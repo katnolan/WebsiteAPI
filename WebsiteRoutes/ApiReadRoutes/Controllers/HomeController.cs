@@ -5,12 +5,14 @@ using System.Web;
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
 namespace ApiReadRoutes.Controllers
 {
+    [Authorize]
     [Route("api/home")]
     public class HomeController : Controller
     {

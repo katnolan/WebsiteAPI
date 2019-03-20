@@ -25,7 +25,11 @@ namespace ApiReadRoutes.Services
 
         public static string BuildQuery(int clubid, ScheduleFilters cf)
         {
-            string query = @"SELECT
+            string query = "";
+            string groupQuery = "";
+            if(cf.language == 0 || cf.language == 2)
+            {
+                query = @"SELECT
                                     Classes.ClassId classid,
                                     Classes.ClubId clubid,
                                     IFNULL(ClassCategories.CategoryName,'') name,
@@ -39,10 +43,10 @@ namespace ApiReadRoutes.Services
                                     IFNULL(Concepts.ConceptId, 0) conceptId,
                                     IFNULL(Concepts.Concept,'') conceptName,
                                     IFNULL(Classes.Attendance,0) booked,
-                                    CASE WHEN ClassSchedules.ClassScheduleType = 'Program Registration' THEN ClassSchedules.DateFrom
+                                    CASE WHEN ClassSchedules.ClassScheduleType = 'PRG' THEN ClassSchedules.DateFrom
                                         ELSE DATE('1900-01-01')
                                     END sessionBeginDate,
-                                    CASE WHEN  ClassSchedules.ClassScheduleType = 'Program Registration' THEN ClassSchedules.DateTo
+                                    CASE WHEN  ClassSchedules.ClassScheduleType = 'PRG' THEN ClassSchedules.DateTo
                                         ELSE DATE('1900-01-01')
                                     END sessionEndDate,
                                     CASE WHEN ClassCategories.NonMemberFlag = false THEN 'Member Only'
@@ -70,8 +74,7 @@ namespace ApiReadRoutes.Services
                               ClassCategories.MovementTypeId is not null and 
                               Classes.ClubId = " + clubid.ToString();
 
-
-            string groupQuery = @" GROUP BY ClassId,
+                groupQuery = @" GROUP BY ClassId,
                                      ClubId,
                                      CategoryName,
                                      Description,
@@ -96,6 +99,81 @@ namespace ApiReadRoutes.Services
                                      DropInFlag,
                                      Intensity
                                      order by classid ";
+            }
+            else
+            {
+                query = @"SELECT
+                                    Classes.ClassId classid,
+                                    Classes.ClubId clubid,
+                                    IFNULL(ClassCategories.FrenchCategoryName,'') name,
+                                    IFNULL(ClassCategories.FrenchDescription, '') shortDescription,
+                                    IFNULL(MovementTypes.MovementTypeId, 0) activityTypeId,
+                                    ARRAY_AGG (Distinct IFNULL(Classes.EmployeeId, 0)) personnelid,
+                                    ARRAY_AGG (Distinct IFNULL(CONCAT(Employees.FirstName, ' ', Employees.LastName),'')) personnelName,
+                                    IFNULL(DATETIME(Classes.Date, Classes.TimeFrom), '1900-01-01') startDateTime,
+                                    IFNULL(DATETIME(Classes.Date, Classes.TimeTo), '1900-01-01') endDateTime,
+                                    IFNULL(ClassSchedules.ClassScheduleType,'') activityCode,
+                                    IFNULL(Concepts.ConceptId, 0) conceptId,
+                                    IFNULL(Concepts.FrenchConcept,'') conceptName,
+                                    IFNULL(Classes.Attendance,0) booked,
+                                    CASE WHEN ClassSchedules.ClassScheduleType = 'PRG' THEN ClassSchedules.DateFrom
+                                        ELSE DATE('1900-01-01')
+                                    END sessionBeginDate,
+                                    CASE WHEN  ClassSchedules.ClassScheduleType = 'PRG' THEN ClassSchedules.DateTo
+                                        ELSE DATE('1900-01-01')
+                                    END sessionEndDate,
+                                    CASE WHEN ClassCategories.NonMemberFlag = false THEN 'Member Only'
+                                        ELSE 'Non-Member Allowed'
+                                    END memberStatus,
+                                    CASE WHEN ClassSchedules.MemberAmount > 0 then true
+                                         WHEN ClassSchedules.NonMemberAmount > 0 then true
+                                         ELSE false
+                                    END isPaid,
+                                    ARRAY_AGG (Distinct IFNULL(Classes.resourceId,0)) resourceId,
+                                    IFNULL(Classes.Capacity,0) attendingCapacity,
+                                    IFNULL(ClassSchedules.CSIScheduleGUID,'') scheduleGUID,
+                                    IFNULL(ClassCategories.ClassTypeId,0) ClassTypeId,
+                                    IFNULL(ClassCategories.FamilyFlag, false) FamilyFlag,
+                                    IFNULL(ClassCategories.DropInFlag,false) isDropIn,
+                                    IFNULL(Classes.Intensity, '') Intensity
+                            FROM Data_Layer_Test.Classes
+                            INNER JOIN Data_Layer_Test.ClassSchedules on Classes.ClassScheduleId = ClassSchedules.ClassScheduleId 
+                            LEFT JOIN Data_Layer_Test.ClassCategories on ClassCategories.ClassCategoryId = ClassSchedules.ClassCategoryId and ClassCategories.ClubId = Classes.ClubId
+                            LEFT JOIN Data_Layer_Test.MovementTypes on MovementTypes.MovementTypeId = ClassCategories.MovementTypeId
+                            LEFT JOIN Data_Layer_Test.ClassTypes on ClassTypes.ClassTypeId = ClassCategories.ClassTypeId and ClassTypes.CSIServiceId = ClassCategories.ClassCategoryId
+                            LEFT JOIN Data_Layer_Test.Concepts on Concepts.ConceptId = ClassTypes.ConceptId and Concepts.ClubId = ClassTypes.ClubId
+                            LEFT JOIN Data_Layer_Test.Employees on Employees.CSIEmployeeId = Classes.EmployeeId
+                            WHERE Classes.Date >= CURRENT_DATE() and 
+                              ClassCategories.MovementTypeId is not null and 
+                              Classes.ClubId = " + clubid.ToString();
+
+                groupQuery = @" GROUP BY ClassId,
+                                     ClubId,
+                                     FrenchCategoryName,
+                                     FrenchDescription,
+                                     MovementTypes.MovementTypeId,
+                                     Date,
+                                     TimeFrom,
+                                     TimeTo,
+                                     ClassScheduleType,
+                                     ConceptId,
+                                     FrenchConcept,
+                                     Attendance,
+                                     ClassScheduleType,
+                                     ClassSchedules.DateFrom,
+                                     ClassSchedules.DateTo,
+                                     NonMemberFlag,
+                                     MemberAmount,
+                                     NonMemberAmount,
+                                     Capacity,
+                                     CSIScheduleGUID,
+                                     ClassTypeId,
+                                     FamilyFlag,
+                                     DropInFlag,
+                                     Intensity
+                                     order by classid ";
+
+            }
 
 
 

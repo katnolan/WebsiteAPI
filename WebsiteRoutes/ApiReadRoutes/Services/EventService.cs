@@ -30,7 +30,11 @@ namespace ApiReadRoutes.Services
 
         public static string BuildQuery(int clubid, EventsFilters ef, int? eventid = null)
         {
-            string mainquery = @" select e.eventid, 
+            string mainquery = "";
+            string groupquery = "";
+            if (ef.language == 0 || ef.language == 2)
+            {
+                mainquery = @" select e.eventid, 
                                       IFNULL(cc.CategoryName, '') name,
                                       IFNULL(cc.Description, '') description,
                                       DATETIME(e.Date, e.TimeFrom) startdate,
@@ -47,7 +51,8 @@ namespace ApiReadRoutes.Services
                                       ARRAY_AGG(DISTINCT IFNULL(cc.MovementTypeId,0)) activityTypeId,
                                       cc.FamilyFlag familyFlag,
                                       ARRAY_AGG(DISTINCT IFNULL(e.resourceId, 0)) resourceId,
-                                      c.conceptId
+                                      c.conceptId,
+                                      IFNULL(c.Concept, '') conceptName
                                FROM Data_Layer_Test.Events e 
                              Left JOIN Data_Layer_Test.ClassSchedules cs
                                 ON e.ClassScheduleId = cs.ClassScheduleId
@@ -65,7 +70,7 @@ namespace ApiReadRoutes.Services
                                 ON e.ClubId = cl.ClubId
                                 where e.Clubid = " + clubid.ToString();
 
-            string groupQuery = @" group by e.eventid,
+                groupquery = @" group by e.eventid,
                                          cc.CategoryName,
                                          cc.Description,
                                          e.Date,
@@ -80,20 +85,81 @@ namespace ApiReadRoutes.Services
                                          e.Capacity,
                                          cs.CSIScheduleGUID,
                                          cc.FamilyFlag,
-                                         c.conceptId
+                                         c.conceptId,
+                                         c.Concept
                                 order by  e.eventid";
+            }
+            else
+            {
+                mainquery = @" select e.eventid, 
+                                      IFNULL(cc.FrenchCategoryName, '') name,
+                                      IFNULL(cc.FrenchDescription, '') description,
+                                      DATETIME(e.Date, e.TimeFrom) startdate,
+                                      DATETIME(e.Date, e.TimeTo) enddate,
+                                      CAST(MemberAmount as FLOAT64) memberamount,
+                                      CAST(NonMemberAmount as FLOAT64) nonmemberamount,
+                                      e.CanBook canbook,                                  
+                                      e.ClubId clubid,
+                                      cl.ClubName location,
+                                      e.Attendance attendance,
+                                      IFNULL(e.Capacity, 20) capacity,
+                                      ARRAY_AGG(DISTINCT IFNULL(em.employeeid, 0)) personnelid,
+                                      cs.CSIScheduleGUID scheduleGUID,
+                                      ARRAY_AGG(DISTINCT IFNULL(cc.MovementTypeId,0)) activityTypeId,
+                                      cc.FamilyFlag familyFlag,
+                                      ARRAY_AGG(DISTINCT IFNULL(e.resourceId, 0)) resourceId,
+                                      c.conceptId,
+                                      IFNULL(c.FrenchConcept, '') conceptName
+                               FROM Data_Layer_Test.Events e 
+                             Left JOIN Data_Layer_Test.ClassSchedules cs
+                                ON e.ClassScheduleId = cs.ClassScheduleId
+                             left JOIN Data_Layer_Test.ClassCategories cc
+                                ON cc.ClassCategoryId = cs.ClassCategoryId
+                             LEFT JOIN Data_Layer_Test.ClassTypes ct
+                                ON ct.ClassTypeId = cc.ClassTypeId and ct.CSIServiceId = cc.ClassCategoryId
+                             LEFT JOIN Data_Layer_Test.Concepts c
+                                ON c.ConceptId = ct.ConceptId
+                             LEFT JOIN Data_Layer_Test.Resources r 
+                                ON e.ResourceId = r.ResourceId
+                             LEFT JOIN Data_Layer_Test.Employees em
+                                ON em.CSIEmployeeId = e.EmployeeId
+                             LEFT JOIN Data_Layer_Test.Clubs cl
+                                ON e.ClubId = cl.ClubId
+                                where e.Clubid = " + clubid.ToString();
+
+                groupquery = @" group by e.eventid,
+                                         cc.FrenchCategoryName,
+                                         cc.FrenchDescription,
+                                         e.Date,
+                                         e.TimeFrom,
+                                         e.TimeTo,
+                                         cs.MemberAmount,
+                                         cs.NonMemberAmount,
+                                         e.CanBook,
+                                         e.ClubId,
+                                         cl.ClubName,
+                                         e.Attendance,
+                                         e.Capacity,
+                                         cs.CSIScheduleGUID,
+                                         cc.FamilyFlag,
+                                         c.conceptId,
+                                         c.FrenchConcept
+                                order by  e.eventid";
+            }
+
+             
 
 
             if(ef == null)
             {
                 if(eventid == null)
                 {
-                    return mainquery + groupQuery;
+                    return mainquery + groupquery;
                 }
                 else
                 {
                     string e = EventCheck(eventid);
-                    return mainquery + e + groupQuery;
+                    return mainquery + e + groupquery;
                 }
             }
             else
@@ -104,7 +170,7 @@ namespace ApiReadRoutes.Services
                 string r = ResourceCheck(ef);
                 string e = EventCheck(eventid);
 
-                return mainquery + s + d + k + r + e + groupQuery ;
+                return mainquery + s + d + k + r + e + groupquery ;
 
             }
 
@@ -229,7 +295,8 @@ namespace ApiReadRoutes.Services
                     activityTypeId = (long[])(row["activityTypeId"]),
                     familyFlag = Convert.ToBoolean(row["familyFlag"]),
                     resourceId = (long[])(row["resourceId"]),
-                    conceptId = Convert.ToInt32(row["conceptId"])
+                    conceptId = Convert.ToInt32(row["conceptId"]),
+                    conceptName = row["conceptName"].ToString()
                 };
 
 

@@ -23,6 +23,7 @@ namespace ApiReadRoutes.Models
 
         public string dateto { get; set; }
 
+        public int? language { get; set; }
 
 
         public override string ToString()

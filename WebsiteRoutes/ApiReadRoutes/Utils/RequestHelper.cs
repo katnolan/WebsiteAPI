@@ -42,7 +42,7 @@ namespace ApiReadRoutes.Utils
                 keyword = null,
                 datefrom = null,
                 dateto = null,
-                
+                language = 0
             };
 
             Dictionary<string, string> valuePairs = ParseUri(request);
@@ -54,6 +54,7 @@ namespace ApiReadRoutes.Utils
                 if(valuePairs.TryGetValue("datefrom", out string f)) { _eventsFilters.datefrom = valuePairs["datefrom"].ToString(); }
                 if (valuePairs.TryGetValue("dateto", out string t)) { _eventsFilters.dateto = valuePairs["dateto"].ToString(); }
                 if(valuePairs.TryGetValue("keyword", out string k)) { _eventsFilters.keyword = valuePairs["keyword"]; }
+                if (valuePairs.TryGetValue("language", out string l)) { _eventsFilters.language = Convert.ToInt32(valuePairs["language"]);  }
 
                 return _eventsFilters;
 
@@ -78,7 +79,8 @@ namespace ApiReadRoutes.Utils
                 keyword = null,
                 limit = null,
                 offset = null,
-                classtypeid = null
+                classtypeid = null,
+                language = 0
             };
 
             Dictionary<string, string> valuePairs = ParseUri(request);
@@ -95,6 +97,7 @@ namespace ApiReadRoutes.Utils
                 if (valuePairs.TryGetValue("limit", out string l)) { _classFilters.limit = Convert.ToInt32(valuePairs["limit"]); }
                 if (valuePairs.TryGetValue("offset", out string o)) { _classFilters.offset = Convert.ToInt32(valuePairs["offset"]); }
                 if (valuePairs.TryGetValue("classtypeid", out string ct)) { _classFilters.classtypeid = Convert.ToInt32(valuePairs["classtypeid"]); }
+                if (valuePairs.TryGetValue("language", out string lang)) { _classFilters.language = Convert.ToInt32(valuePairs["language"]);  }
 
                 return _classFilters;
             }

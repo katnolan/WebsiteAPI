@@ -23,7 +23,7 @@ namespace ApiReadRoutes.Controllers
             _logger = logger;
         }
 
-
+        [HttpGet]
         public ActionResult GetResources(int clubid, int? resourceid = null)
         {
             _logger.LogInformation("Logging Information");

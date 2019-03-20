@@ -27,14 +27,23 @@ namespace ApiReadRoutes.Controllers
 
         //GET v1/schedule/{clubid}?startdate={startdate}&enddate={enddate}&conceptid=[{conceptid}]&classid=[{classid}]&personnelid=[{personnelid}]&activityType={activityType}&keyword={keyword}&status={status}&limit={limit}&offset={offset}&classtypeid={classtypeid}
         [HttpGet]
-        public ActionResult GetSchedules(int clubid, string activitytype, string status, string keyword, string datefrom = null, string dateto = null, int?[] conceptid = null, int?[] personnelid = null, int? limit = null, int? offset = null, int? classtypeid = null)
+        public ActionResult GetSchedules(int clubid, string activitytype, string status, string keyword, string datefrom = null, string dateto = null, int?[] conceptid = null, int?[] personnelid = null, int? limit = null, int? offset = null, int? classtypeid = null, int? language = 0)
         {
             _logger.LogInformation("Logging Info");
 
             ScheduleFilters classFilters = RequestHelper.GetClassesFilters(Request);
 
             List<Schedule> classes = new ScheduleService(clubid, classFilters).GetClasses();
-            return Ok(classes);
+
+            if(classes.Count() == 0)
+            {
+                return NotFound("No result");
+            }
+            else
+            {
+                return Ok(classes);
+            }
+            
         }
 
 

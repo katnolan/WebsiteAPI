@@ -25,6 +25,7 @@ namespace ApiReadRoutes.Models
         public bool familyFlag { get; set; }
         public long[] resourceId { get; set; }
         public int conceptId { get; set; }
+        public string conceptName { get; set; }
 
         public Event()
         {

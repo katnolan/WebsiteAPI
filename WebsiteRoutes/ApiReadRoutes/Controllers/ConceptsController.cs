@@ -24,33 +24,18 @@ namespace ApiReadRoutes.Controllers
             _logger = logger;
         }
 
-        List<Concept> concepts = new ConceptService().GetConcepts();
+        
 
 
         [HttpGet]
-        public ActionResult GetConcepts(int? clubid, int? conceptid = null)
+        public ActionResult GetConcepts(int? clubid = null, int? conceptid = null, int? language = 0)
         {
             _logger.LogInformation("Logging info");
 
-            if (clubid != null && conceptid != null)
-            {
-                var clubConcept = concepts.Where((c) => c.conceptid == conceptid && c.clubid == clubid);
-                return Ok(clubConcept);
-            }
-            else if (conceptid != null)
-            {
-                var clubConcept = concepts.Where((s) => s.conceptid == conceptid);
-                return Ok(clubConcept);
-            }
-            else if (clubid != null)
-            {
-                var clubConcept = concepts.Where((c) => c.clubid == clubid);
-                return Ok(clubConcept);
-            }
-            else
-            {
-                return Ok(concepts);
-            }
+            List<Concept> concepts = new ConceptService(clubid, conceptid, language).GetConcepts();
+
+            return Ok(concepts);
+
 
         }
 

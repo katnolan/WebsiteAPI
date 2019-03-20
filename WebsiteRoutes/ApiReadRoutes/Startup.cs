@@ -39,11 +39,11 @@ namespace ApiReadRoutes
                 {
                     Title = "Website Read Routes",
                     Version = "v2",
-                    Description = "Website/App DataLayer Read Routes",
+                    Description = "Website/App Data Layer Read Routes",
                     Contact = new Contact
                     {
-                        Name = "Kat Nolan Porta",
-                        Email = "kat.nolanporta@midtown.com"
+                        Name = "Tony Muhm",
+                        Email = "anthony.muhm@midtown.com"
                     }
                 });
             });
@@ -96,7 +96,7 @@ namespace ApiReadRoutes
                 // specifying the Swagger JSON endpoint.
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Website Read Routes V1");
+                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "Website Read Routes V2");
                     c.RoutePrefix = string.Empty;
                 });
             }

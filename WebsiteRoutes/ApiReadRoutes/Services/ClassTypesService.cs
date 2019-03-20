@@ -12,11 +12,15 @@ namespace ApiReadRoutes.Services
     {
         public readonly List<BigQueryResults> Results = new List<BigQueryResults>();
 
-        public ClassTypesService(int clubid, int? conceptid)
+        public ClassTypesService(int clubid, int? conceptid, int? language)
         {
-            string query = @"select DISTINCT
+            string query = "";
+
+            if (language == 0 || language == 2)
+            {
+                query = @"select DISTINCT
                                     ClassTypes.ClassTypeId id, 
-                                    ClassTypes.ClassType name,
+                                    IFNULL(ClassTypes.ClassType, '') name,
                                     ClassTypes.ConceptId conceptId,
                                     ClassCategories.CategoryName className,
                                     IFNULL(ClassCategories.Description, '') description
@@ -24,6 +28,21 @@ namespace ApiReadRoutes.Services
                             inner join Data_Layer_Test.ClassCategories on ClassCategories.ClassTypeId = ClassTypes.ClassTypeId and ClassCategories.ClassCategoryId = ClassTypes.CSIServiceId
                             where ClassCategories.EventFlag = false
                               and ClassCategories.ClubId = " + clubid.ToString();
+            }
+            else
+            {
+                query = @"select DISTINCT
+                                    ClassTypes.ClassTypeId id, 
+                                    IFNULL(ClassTypes.FrenchClassType, '') name,
+                                    ClassTypes.ConceptId conceptId,
+                                    IFNULL(ClassCategories.FrenchCategoryName, '') className,
+                                    IFNULL(ClassCategories.FrenchDescription, '') description
+                            from Data_Layer_Test.ClassTypes
+                            inner join Data_Layer_Test.ClassCategories on ClassCategories.ClassTypeId = ClassTypes.ClassTypeId and ClassCategories.ClassCategoryId = ClassTypes.CSIServiceId
+                            where ClassCategories.EventFlag = false
+                              and ClassCategories.ClubId = " + clubid.ToString();
+            }
+            
 
             if(conceptid != null)
             {
