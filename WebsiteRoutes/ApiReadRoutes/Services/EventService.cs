@@ -68,7 +68,8 @@ namespace ApiReadRoutes.Services
                                 ON em.CSIEmployeeId = e.EmployeeId
                              LEFT JOIN Data_Layer_Test.Clubs cl
                                 ON e.ClubId = cl.ClubId
-                                where e.Clubid = " + clubid.ToString();
+                                where DATETIME(e.Date, e.TimeFrom) >= CURRENT_DATETIME()
+                                  and e.Clubid = " + clubid.ToString();
 
                 groupquery = @" group by e.eventid,
                                          cc.CategoryName,
@@ -125,7 +126,8 @@ namespace ApiReadRoutes.Services
                                 ON em.CSIEmployeeId = e.EmployeeId
                              LEFT JOIN Data_Layer_Test.Clubs cl
                                 ON e.ClubId = cl.ClubId
-                                where e.Clubid = " + clubid.ToString();
+                                where DATETIME(e.Date, e.DateFrom) >= CURRENT_DATETIME()
+                                  and e.Clubid = " + clubid.ToString();
 
                 groupquery = @" group by e.eventid,
                                          cc.FrenchCategoryName,
