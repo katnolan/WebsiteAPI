@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-
-namespace ApiReadRoutes.Models
+﻿namespace ApiReadRoutes.Models
 {
     public class ScheduleFilters
     {

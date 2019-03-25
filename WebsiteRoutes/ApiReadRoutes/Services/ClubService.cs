@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Google.Cloud.BigQuery.V2;
 using ApiReadRoutes.Utils;
 using ApiReadRoutes.Models;

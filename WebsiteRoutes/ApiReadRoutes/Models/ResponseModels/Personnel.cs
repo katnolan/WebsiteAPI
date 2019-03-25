@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ApiReadRoutes.Models
+﻿namespace ApiReadRoutes.Models
 {
     public class Personnel
     {

@@ -1,13 +1,7 @@
-﻿using Microsoft.IdentityModel;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Configuration;
-using System.Net.Http;
-using System.Text;
 using System.Web;
 using ApiReadRoutes.Models;
 
