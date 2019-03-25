@@ -71,8 +71,7 @@ namespace ApiReadRoutes.Services
                             LEFT JOIN Data_Layer_Test.Concepts on Concepts.ConceptId = ClassTypes.ConceptId and Concepts.ClubId = ClassTypes.ClubId
                             LEFT JOIN Data_Layer_Test.Employees on Employees.CSIEmployeeId = Classes.EmployeeId
                             WHERE Classes.Date >= CURRENT_DATE() and 
-                              ClassCategories.MovementTypeId is not null and 
-                              Classes.ClubId = " + clubid.ToString();
+                                  Classes.ClubId = " + clubid.ToString();
 
                 groupQuery = @" GROUP BY ClassId,
                                      ClubId,
@@ -144,7 +143,6 @@ namespace ApiReadRoutes.Services
                             LEFT JOIN Data_Layer_Test.Concepts on Concepts.ConceptId = ClassTypes.ConceptId and Concepts.ClubId = ClassTypes.ClubId
                             LEFT JOIN Data_Layer_Test.Employees on Employees.CSIEmployeeId = Classes.EmployeeId
                             WHERE Classes.Date >= CURRENT_DATE() and 
-                              ClassCategories.MovementTypeId is not null and 
                               Classes.ClubId = " + clubid.ToString();
 
                 groupQuery = @" GROUP BY ClassId,
