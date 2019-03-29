@@ -16,7 +16,7 @@ namespace ApiReadRoutes.Services
                             MovementTypeId activityTypeId,
                             MovementType activityType
                          FROM
-                            Data_Layer.MovementTypes
+                            Data_Layer_Test.MovementTypes
                          WHERE IsActive = true";
 
             string queryType = " and MovementType = " + type;
